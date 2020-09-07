@@ -1,0 +1,49 @@
+#!/bin/bash
+# Configure the action runner after the package file has been downloaded.
+set -e
+
+#Set URL's
+URL="https://github.com/<%= $github_actions_runner::org_name %>"
+TOKEN_URL="https://api.github.com/orgs/<%= $github_actions_runner::org_name %>/actions/runners/registration-token"
+
+<% if $github_actions_runner::repo_name { -%>
+  URL="https://github.com/<%= $github_actions_runner::org_name %>/<%= $github_actions_runner::repo_name %>"
+  TOKEN_URL="https://api.github.com/repos/<%= $github_actions_runner::org_name %>/<%= $github_actions_runner::repo_name %>/actions/runners/registration-token"
+<% } -%>
+
+# Set labels if defined
+<% if $github_actions_runner::labels { -%>
+  LABELS="--lables <%= $github_actions_runner::labels.join(',') %>"
+<% } -%>
+
+# Get registration token.
+TOKEN=$(curl -s -XPOST                                                             \
+    -H "authorization: token <%= $github_actions_runner::personal_access_token %>" \
+    ${TOKEN_URL} | jq -r .token)
+
+# Allow root
+export RUNNER_ALLOW_RUNASROOT=true
+
+
+
+# (Optional) Remove previous config.
+<%= $github_actions_runner::root_dir %>/config.sh remove       \
+  --url ${URL}                                                 \
+  --token ${TOKEN}                                             \
+  --name <%= $github_actions_runner::hostname %> &>/dev/null
+
+
+# Configure the runner.
+<%= $github_actions_runner::root_dir %>/config.sh              \
+  --unattended                                                 \
+  --replace                                                    \
+  --name <%= $github_actions_runner::hostname %>               \
+  --url ${URL}                                                 \
+  --token ${TOKEN}                                             \
+  ${LABELS} &>/dev/null
+
+# Copy service endpoint script.
+if [ ! -f <%= $github_actions_runner::root_dir %>/runsvc.sh ]; then
+  cp <%= $github_actions_runner::root_dir %>/bin/runsvc.sh <%= $github_actions_runner::root_dir %>/runsvc.sh
+  chmod 755 <%= $github_actions_runner::root_dir %>/runsvc.sh
+fi
