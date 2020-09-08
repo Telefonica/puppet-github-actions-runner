@@ -13,7 +13,7 @@ TOKEN_URL="https://api.github.com/orgs/<%= $github_actions_runner::org_name %>/a
 
 # Set labels if defined
 <% if $github_actions_runner::labels { -%>
-  LABELS="--lables <%= $github_actions_runner::labels.join(',') %>"
+  LABELS="--labels <%= $github_actions_runner::labels.join(',') %>"
 <% } -%>
 
 # Get registration token.
