@@ -1,4 +1,4 @@
-# Actions runner
+# GitHub Actions Runner
 
 This module is designed to auto configure all requirements to have the GitHub Actions runner  ready to run on Debian hosts.
 
