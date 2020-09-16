@@ -2,33 +2,18 @@
 # Configure the action runner after the package file has been downloaded.
 set -e
 
-#Set URL's
-URL="https://github.com/<%= $github_actions_runner::org_name %>"
-TOKEN_URL="https://api.github.com/orgs/<%= $github_actions_runner::org_name %>/actions/runners/registration-token"
-
-<% if $github_actions_runner::repo_name { -%>
-  URL="https://github.com/<%= $github_actions_runner::org_name %>/<%= $github_actions_runner::repo_name %>"
-  TOKEN_URL="https://api.github.com/repos/<%= $github_actions_runner::org_name %>/<%= $github_actions_runner::repo_name %>/actions/runners/registration-token"
-<% } -%>
-
-# Set labels if defined
-<% if $github_actions_runner::labels { -%>
-  LABELS="--labels <%= $github_actions_runner::labels.join(',') %>"
-<% } -%>
-
 # Get registration token.
 TOKEN=$(curl -s -XPOST                                                             \
     -H "authorization: token <%= $github_actions_runner::personal_access_token %>" \
-    ${TOKEN_URL} | jq -r .token)
+    <%= $github_actions_runner::token_url %> | jq -r .token)
 
 # Allow root
 export RUNNER_ALLOW_RUNASROOT=true
 
 
-
 # (Optional) Remove previous config.
 <%= $github_actions_runner::root_dir %>/config.sh remove       \
-  --url ${URL}                                                 \
+  --url <%= $github_actions_runner::url %>                     \
   --token ${TOKEN}                                             \
   --name <%= $github_actions_runner::hostname %> &>/dev/null
 
@@ -38,9 +23,9 @@ export RUNNER_ALLOW_RUNASROOT=true
   --unattended                                                 \
   --replace                                                    \
   --name <%= $github_actions_runner::hostname %>               \
-  --url ${URL}                                                 \
+  --url <%= $github_actions_runner::url %>                     \
   --token ${TOKEN}                                             \
-  ${LABELS} &>/dev/null
+  <%= $github_actions_runner::assured_labels %> &>/dev/null
 
 # Copy service endpoint script.
 if [ ! -f <%= $github_actions_runner::root_dir %>/runsvc.sh ]; then

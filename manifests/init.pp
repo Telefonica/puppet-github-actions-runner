@@ -63,6 +63,20 @@ class github_actions_runner (
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
+  if $github_actions_runner::labels {
+    $flattend_labels_list=join($github_actions_runner::labels, ',')
+    $assured_labels="--labels ${flattend_labels_list}"
+  }
+
+  if $github_actions_runner::repo_name {
+    $url="https://github.com/${github_actions_runner::org_name}/${github_actions_runner::repo_name}"
+    $token_url="https://api.github.com/repos/${github_actions_runner::org_name}/${github_actions_runner::repo_name}/actions/runners/registration-token"
+  }
+  else {
+    $url="https://github.com/${github_actions_runner::org_name}"
+    $token_url="https://api.github.com/repos/${github_actions_runner::org_name}/actions/runners/registration-token"
+  }
+
   class { '::github_actions_runner::config': }
   -> class { '::github_actions_runner::install': }
   ~> class { '::github_actions_runner::service': }

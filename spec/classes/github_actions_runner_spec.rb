@@ -55,11 +55,24 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a github_actions_runner installation script with content' do
+      context 'is expected to create a github_actions_runner installation script with config in content' do
         it do
           is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/\/tmp\/actions-runner-1.0.1\/config.sh/)
         end
       end
+
+      context 'is expected to create a github_actions_runner installation script with repo url in content' do
+        it do
+          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/https:\/\/github.com\/test_org\/test_repo/)
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation script with labels in content' do
+        it do
+          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/test_label1,test_label2/)
+        end
+      end
+
     end
   end
 end
