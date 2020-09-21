@@ -43,9 +43,6 @@
 # * group
 # String, Group to be used in Service and directories.
 #
-# * assured_labels
-# String, comma separated labels list to be use in the configuration script.
-#
 
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
