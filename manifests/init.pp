@@ -57,7 +57,6 @@ class github_actions_runner (
   String                    $repository_url,
   String                    $user,
   String                    $group,
-  String                    $assured_labels = undef,
   String                    $hostname = $::facts['hostname'],
   Optional[Array[String]]   $labels = undef,
   Optional[String]          $repo_name = undef,
@@ -69,6 +68,8 @@ class github_actions_runner (
   if $github_actions_runner::labels {
     $flattend_labels_list=join($github_actions_runner::labels, ',')
     $assured_labels="--labels ${flattend_labels_list}"
+  } else {
+    $assured_labels = undef
   }
 
   $url = $github_actions_runner::repo_name ? {
