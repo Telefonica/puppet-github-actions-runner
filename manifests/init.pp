@@ -43,7 +43,9 @@
 # * group
 # String, Group to be used in Service and directories.
 #
-
+# * assured_labels
+# String, comma separated labels list to be use in the configuration script.
+#
 
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
@@ -55,6 +57,7 @@ class github_actions_runner (
   String                    $repository_url,
   String                    $user,
   String                    $group,
+  String                    $assured_labels = undef,
   String                    $hostname = $::facts['hostname'],
   Optional[Array[String]]   $labels = undef,
   Optional[String]          $repo_name = undef,
@@ -68,13 +71,14 @@ class github_actions_runner (
     $assured_labels="--labels ${flattend_labels_list}"
   }
 
-  if $github_actions_runner::repo_name {
-    $url="https://github.com/${github_actions_runner::org_name}/${github_actions_runner::repo_name}"
-    $token_url="https://api.github.com/repos/${github_actions_runner::org_name}/${github_actions_runner::repo_name}/actions/runners/registration-token"
+  $url = $github_actions_runner::repo_name ? {
+    undef => "https://github.com/${github_actions_runner::org_name}",
+    default => "https://github.com/${github_actions_runner::org_name}/${github_actions_runner::repo_name}",
   }
-  else {
-    $url="https://github.com/${github_actions_runner::org_name}"
-    $token_url="https://api.github.com/repos/${github_actions_runner::org_name}/actions/runners/registration-token"
+
+  $token_url = $github_actions_runner::repo_name ? {
+    undef => "https://api.github.com/repos/${github_actions_runner::org_name}/actions/runners/registration-token",
+    default => "https://api.github.com/repos/${github_actions_runner::org_name}/${github_actions_runner::repo_name}/actions/runners/registration-token",
   }
 
   class { '::github_actions_runner::config': }

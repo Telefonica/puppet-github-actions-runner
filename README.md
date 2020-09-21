@@ -1,6 +1,6 @@
 # GitHub Actions Runner
 
-This module is designed to automatically configure all requirements to have the GitHub Actions runner ready to run on Debian hosts as a service.
+Automatic configuration for running GitHub Actions on Debian hosts as a service
 
 #### Table of Contents
 
@@ -42,3 +42,4 @@ If you don't specify repository name , make sure you `Personal Access Token` is 
 ### Development
 
 This module development should be just like any other puppet modules.
+Use PDK to run unit tests: `pdk test unit`
