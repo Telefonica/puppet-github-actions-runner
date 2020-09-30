@@ -8,12 +8,12 @@ Automatic configuration for running GitHub Actions on Debian hosts as a service
 2. [Limitations - OS compatibility, etc.](#limitations)
 3. [Development - Guide for contributing to the module](#development)
 
-### Description
+## Description
 
 This module will setup all of the files and configuration needed for GitHub Actions runner to work on any Debian 9 hosts.
 
 
-#### hiera configuration
+### hiera configuration
 
 This module supports configuration through hiera. The following example
 creates repository level Actions runners. 
@@ -31,7 +31,7 @@ github_actions_runner::labels:
   - self-hosted-custom
 ```
 
-### Limitations
+## Limitations
 
 Tested on Debian 9 stretch hosts only.
 full list of operating systems support and requirements are described in `metadata.json` file.
@@ -39,7 +39,12 @@ full list of operating systems support and requirements are described in `metada
 
 If you don't specify repository name , make sure you `Personal Access Token` is org level admin.
 
-### Development
+## Development
 
 This module development should be just like any other puppet modules.
 Use PDK to run unit tests: `pdk test unit`
+
+## License
+
+*GitHub Actions Runner* is available under the Apache License, Version 2.0. See LICENSE file
+for more info.
