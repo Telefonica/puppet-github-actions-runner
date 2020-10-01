@@ -15,9 +15,11 @@
 
 Guides the basic setup and installation of GitHub actions runnner on your system.
 
+You can read more about self-hosted actions runner [here](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/about-self-hosted-runners)
+
 #### Parameters
 
-The following parameters are available in the `apache` class.
+The following parameters are available in the `github_actions_runner` class.
 
 ##### `ensure`
 
@@ -62,7 +64,7 @@ Default value: $::facts['hostname']
 
 Data type: `String`
 
-GitHub PAT with admin permission on the repositories or the origanization.
+GitHub Personal Access Token with admin permission on the repositories or the origanization.
 
 
 ##### `package_name`
@@ -82,6 +84,8 @@ actions-runner-linux-x64
 Data type: `String`
 
 GitHub Actions runner version to be used.
+
+You can find latest versions [here](https://github.com/actions/runner/releases)
 
 **Example**:
 
