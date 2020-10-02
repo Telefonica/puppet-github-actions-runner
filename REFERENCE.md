@@ -76,7 +76,8 @@ You can find the package names  [here](https://github.com/actions/runner/release
 
 **Example**:
 
-```actions-runner-linux-x64
+```
+actions-runner-linux-x64
 ```
 
 ##### `package_ensure`
@@ -89,7 +90,8 @@ You can find latest versions [here](https://github.com/actions/runner/releases)
 
 **Example**:
 
-```2.272.0
+```
+2.272.0
 ```
 
 ##### `repository_url`
@@ -100,7 +102,8 @@ A base URL to download GitHub actions runner.
 
 **Example**:
 
-```https://github.com/actions/runner/releases/download
+```
+https://github.com/actions/runner/releases/download
 ```
 
 ##### `user`
