@@ -26,7 +26,7 @@
 #  String, actions runner name.
 #
 # * personal_access_token
-# String, GitHub PAT with admin permission on the repositories or the origanization .
+# String, GitHub PAT with admin permission on the repositories or the origanization.
 #
 # * package_name
 # String, GitHub Actions runner offical package name.
@@ -35,7 +35,7 @@
 # String, GitHub Actions runner version to be used.
 #
 # * repository_url
-# String, URL to download GutHub actions runner.
+# String, URL to download GitHub actions runner.
 #
 # * user
 # String, User to be used in Service and directories.
