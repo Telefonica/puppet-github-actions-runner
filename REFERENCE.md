@@ -13,7 +13,7 @@
 
 ### github_actions_runner
 
-Guides the basic setup and installation of GitHub actions runnner on your system.
+Guides the basic setup and installation of GitHub actions runner on your system.
 
 You can read more about self-hosted actions runner [here](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/about-self-hosted-runners)
 
@@ -64,19 +64,19 @@ Default value: $::facts['hostname']
 
 Data type: `String`
 
-GitHub Personal Access Token with admin permission on the repositories or the origanization.
-
+GitHub Personal Access Token with admin permission on the repositories or the organization.
 
 ##### `package_name`
 
 Data type: `String`
 
-GitHub Actions runner offical package name.
+GitHub Actions runner official package name.
+
+You can find the package names  [here](https://github.com/actions/runner/releases)
 
 **Example**:
 
-```
-actions-runner-linux-x64
+```actions-runner-linux-x64
 ```
 
 ##### `package_ensure`
@@ -89,8 +89,7 @@ You can find latest versions [here](https://github.com/actions/runner/releases)
 
 **Example**:
 
-```
-2.272.0
+```2.272.0
 ```
 
 ##### `repository_url`
@@ -101,8 +100,7 @@ A base URL to download GitHub actions runner.
 
 **Example**:
 
-```
-https://github.com/actions/runner/releases/download
+```https://github.com/actions/runner/releases/download
 ```
 
 ##### `user`
