@@ -5,9 +5,10 @@
 **Classes**
 
 * [`github_actions_runner`](#github_actions_runner)
-* [`github_actions_runner::install`](#github_actions_runner_install)
-* [`github_actions_runner::config`](#github_actions_runner_config)
-* [`github_actions_runner::service`](#github_actions_runner_service)
+
+**Defines**
+
+* [`github_actions_runner::instance`](#github_actions_runner_instance)
 
 ## Classes
 
@@ -31,26 +32,11 @@ Enum, Determine if to add or remove the resource.
 Data type: `Absolutepath`
 Location of the base directory for actions runner to be installed.
 
-##### `repo_name`
-
-Data type: `Optional[String]`
-
-actions runner github repository name to serve.
-Default value: `undef`
-
 ##### `org_name`
 
 Data type: `String`
 
 actions runner github organization name.
-
-##### `labels`
-
-Data type: `Optional[Array[String]]`
-
-A list of costum lables to add to a actions runner host.
-
-Default value: `undef`
 
 ##### `hostname`
 
@@ -118,14 +104,61 @@ Data type: `String`
 
 Group to be used in Service and directories.
 
-### github_actions_runner::install
+### github_actions_runner::instance
 
-Install the files and packages for the module.
+#### Parameters
 
-### github_actions_runner::config
+##### `ensure`
 
-Main path configuration of the module installation.
+Data type: `Enum`
 
-### github_actions_runner::service
+Determine if to add or remove the resource
+Default value: `undef`
 
-The service setup for this module.
+##### `org_name`
+
+Data type: `String`
+
+actions runner github organization name.
+
+Default value: `github_actions_runner::org_name`
+
+##### `personal_access_token`
+
+Data type: `String`
+
+GitHub Personal Access Token with admin permission on the repositories or the organization.
+
+Default value: `github_actions_runner::personal_access_token`
+
+##### `user`
+
+Data type: `String`
+
+User to be used in Service and directories.
+
+Default value: `github_actions_runner::user`
+
+##### `group`
+
+Data type: `String`
+
+Group to be used in Service and directories.
+
+Default value: `github_actions_runner::group`
+
+##### `repo_name`
+
+Data type: `Optional[String]`
+
+actions runner github repository name to serve.
+Default value: `undef`
+
+##### `labels`
+
+Data type: `Optional[Array[String]]`
+
+A list of costum lables to add to a actions runner host.
+
+Default value: `undef`
+

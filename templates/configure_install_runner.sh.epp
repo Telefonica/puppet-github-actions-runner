@@ -1,34 +1,41 @@
+<%- | String $personal_access_token,
+      String $token_url,
+      String $instance_name,
+      Stdlib::Absolutepath $root_dir,
+      String $url,
+      String $hostname,
+      String $assured_labels,
+| -%>
 #!/bin/bash
 # Configure the action runner after the package file has been downloaded.
 set -e
 
 # Get registration token.
-TOKEN=$(curl -s -XPOST                                                             \
-    -H "authorization: token <%= $github_actions_runner::personal_access_token %>" \
-    <%= $github_actions_runner::token_url %> | jq -r .token)
+TOKEN=$(curl -s -XPOST -H "authorization: token <%= $personal_access_token %>"  \
+    <%= $token_url %> | jq -r .token)
 
 # Allow root
 export RUNNER_ALLOW_RUNASROOT=true
 
 
 # (Optional) Remove previous config.
-<%= $github_actions_runner::root_dir %>/config.sh remove       \
-  --url <%= $github_actions_runner::url %>                     \
-  --token ${TOKEN}                                             \
-  --name <%= $github_actions_runner::hostname %> &>/dev/null
+<%= $root_dir %>/<%= $instance_name %>/config.sh remove \
+  --url <%= $url %>                                     \
+  --token ${TOKEN}                                      \
+  --name <%= $hostname %> &>/dev/null
 
 
 # Configure the runner.
-<%= $github_actions_runner::root_dir %>/config.sh              \
-  --unattended                                                 \
-  --replace                                                    \
-  --name <%= $github_actions_runner::hostname %>               \
-  --url <%= $github_actions_runner::url %>                     \
-  --token ${TOKEN}                                             \
-  <%= $github_actions_runner::assured_labels %> &>/dev/null
+<%= $root_dir %>/<%= $instance_name %>/config.sh \
+  --unattended                                   \
+  --replace                                      \
+  --name <%= $hostname %>                        \
+  --url <%= $url %>                              \
+  --token ${TOKEN}                               \
+  <%= $assured_labels %> &>/dev/null
 
 # Copy service endpoint script.
-if [ ! -f <%= $github_actions_runner::root_dir %>/runsvc.sh ]; then
-  cp <%= $github_actions_runner::root_dir %>/bin/runsvc.sh <%= $github_actions_runner::root_dir %>/runsvc.sh
-  chmod 755 <%= $github_actions_runner::root_dir %>/runsvc.sh
+if [ ! -f <%= $root_dir %>/<%= $instance_name %>/runsvc.sh ]; then
+  cp <%= $root_dir %>/<%= $instance_name %>/bin/runsvc.sh <%= $root_dir %>/<%= $instance_name %>/runsvc.sh
+  chmod 755 <%= $root_dir %>/<%= $instance_name %>/runsvc.sh
 fi

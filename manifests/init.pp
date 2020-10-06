@@ -22,9 +22,6 @@
 # * labels
 #  Optional[Array[String]], A list of costum lables to add to a runner.
 #
-# * hostname
-#  String, actions runner name.
-#
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
 #
@@ -54,33 +51,24 @@ class github_actions_runner (
   String                    $repository_url,
   String                    $user,
   String                    $group,
-  String                    $hostname = $::facts['hostname'],
-  Optional[Array[String]]   $labels = undef,
-  Optional[String]          $repo_name = undef,
-
+  Hash[String, Hash]        $instances,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
-  if $github_actions_runner::labels {
-    $flattend_labels_list=join($github_actions_runner::labels, ',')
-    $assured_labels="--labels ${flattend_labels_list}"
-  } else {
-    $assured_labels = undef
+  $ensure_directory = $github_actions_runner::ensure ? {
+    'present' => directory,
+    'absent'  => absent,
   }
 
-  $url = $github_actions_runner::repo_name ? {
-    undef => "https://github.com/${github_actions_runner::org_name}",
-    default => "https://github.com/${github_actions_runner::org_name}/${github_actions_runner::repo_name}",
+  file { $github_actions_runner::root_dir:
+    ensure => $ensure_directory,
+    mode   => '0644',
+    owner  => $github_actions_runner::user,
+    group  => $github_actions_runner::group,
+    force  => true,
   }
 
-  $token_url = $github_actions_runner::repo_name ? {
-    undef => "https://api.github.com/repos/${github_actions_runner::org_name}/actions/runners/registration-token",
-    default => "https://api.github.com/repos/${github_actions_runner::org_name}/${github_actions_runner::repo_name}/actions/runners/registration-token",
-  }
-
-  class { '::github_actions_runner::config': }
-  -> class { '::github_actions_runner::install': }
-  ~> class { '::github_actions_runner::service': }
+  create_resources(github_actions_runner::instance, $github_actions_runner::instances)
 
 }

@@ -12,11 +12,11 @@ Automatic configuration for running GitHub Actions on Debian hosts as a service
 
 This module will setup all of the files and configuration needed for GitHub Actions runner to work on any Debian 9 hosts.
 
-
 ### hiera configuration
 
 This module supports configuration through hiera. The following example
-creates repository level Actions runners. 
+creates repository level Actions runners.
+
 ```yaml
 github_actions_runner::ensure: present
 github_actions_runner::base_dir_name: '/data/actions-runner'
@@ -27,9 +27,37 @@ github_actions_runner::org_name: 'github_org'
 github_actions_runner::personal_access_token: 'PAT'
 github_actions_runner::user: 'root'
 github_actions_runner::group: 'root'
-github_actions_runner::labels:
-  - self-hosted-custom
+github_actions_runner::instances:
+  first_instance:
+    labels:
+      - self-hosted-custom
 ```
+
+You can also override some of the keys on the instance level
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.272.0'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'github_org'
+github_actions_runner::personal_access_token: 'PAT'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::instances:
+  first_instance:
+    labels:
+      - self-hosted-custom1
+  second_instance:
+    ensure: absent
+  third_instance:
+    labels:
+      - self-hosted-custom3
+    repo_name: myrepo
+    org_name: other_org
+    personal_access_token: other_secret
+```
+
 
 ## Limitations
 
