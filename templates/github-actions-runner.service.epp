@@ -3,8 +3,8 @@ Description=github-actions-runner
 After=network.target
 
 [Service]
-ExecStart=<%= $github_actions_runner::root_dir %>/<%= $github_actions_runner::instance::name %>/runsvc.sh
-WorkingDirectory=<%= $github_actions_runner::root_dir %>/<%= $github_actions_runner::instance::name %>
+ExecStart=<%= $github_actions_runner::root_dir %>/<%= $service_name %>/runsvc.sh
+WorkingDirectory=<%= $github_actions_runner::root_dir %>/<%= $service_name %>
 KillMode=process
 KillSignal=SIGTERM
 TimeoutStopSec=5min
