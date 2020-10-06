@@ -15,63 +15,14 @@ describe 'github_actions_runner' do
           :repository_url        => 'https://test_url',
           :user                  => 'test_user',
           :group                 => 'test_group',
-          :labels                => ['test_label1', 'test_label2'],
-          :repo_name             => 'test_repo',
           :base_dir_name         => '/tmp/actions-runner',
+          :instances             => { 'first_runner' => { 'labels' => ['test_label1', 'test_label2'], 'repo_name' => 'test_repo'}},
         }
       end
 
       it { is_expected.to compile.with_all_deps }
       it { is_expected.to contain_class('github_actions_runner') }
-      it { is_expected.to contain_class('github_actions_runner::service') }
-      it { is_expected.to contain_class('github_actions_runner::install') }
       it { is_expected.to contain_class('github_actions_runner::config') }
-
-      context 'is expected to create a github_actions_runner service' do
-        it do
-          is_expected.to contain_service('github-actions-runner').with('ensure' => 'running', 'enable' => true)
-        end
-      end
-
-      context 'is expected to create a github_actions_runner root directory' do
-        it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1').with({
-            'ensure' => 'directory',
-            'owner'  => 'test_user',
-            'group'  => 'test_group',
-            'mode'   => '0644',
-          })
-        end
-      end
-
-      context 'is expected to create a github_actions_runner installation script' do
-        it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with({
-            'ensure' => 'present',
-            'owner'  => 'test_user',
-            'group'  => 'test_group',
-            'mode'   => '0755',
-          })
-        end
-      end
-
-      context 'is expected to create a github_actions_runner installation script with config in content' do
-        it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/\/tmp\/actions-runner-1.0.1\/config.sh/)
-        end
-      end
-
-      context 'is expected to create a github_actions_runner installation script with repo url in content' do
-        it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/https:\/\/github.com\/test_org\/test_repo/)
-        end
-      end
-
-      context 'is expected to create a github_actions_runner installation script with labels in content' do
-        it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1/configure_install_runner.sh').with_content(/test_label1,test_label2/)
-        end
-      end
 
     end
   end

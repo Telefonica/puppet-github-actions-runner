@@ -55,32 +55,13 @@ class github_actions_runner (
   String                    $user,
   String                    $group,
   String                    $hostname = $::facts['hostname'],
-  Optional[Array[String]]   $labels = undef,
-  Optional[String]          $repo_name = undef,
-
+  Hash[String, Hash]        $instances,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
-  if $github_actions_runner::labels {
-    $flattend_labels_list=join($github_actions_runner::labels, ',')
-    $assured_labels="--labels ${flattend_labels_list}"
-  } else {
-    $assured_labels = undef
-  }
+  contain '::github_actions_runner::config'
 
-  $url = $github_actions_runner::repo_name ? {
-    undef => "https://github.com/${github_actions_runner::org_name}",
-    default => "https://github.com/${github_actions_runner::org_name}/${github_actions_runner::repo_name}",
-  }
-
-  $token_url = $github_actions_runner::repo_name ? {
-    undef => "https://api.github.com/repos/${github_actions_runner::org_name}/actions/runners/registration-token",
-    default => "https://api.github.com/repos/${github_actions_runner::org_name}/${github_actions_runner::repo_name}/actions/runners/registration-token",
-  }
-
-  class { '::github_actions_runner::config': }
-  -> class { '::github_actions_runner::install': }
-  ~> class { '::github_actions_runner::service': }
+  create_resources(github_actions_runner::instance, $github_actions_runner::instances)
 
 }

@@ -3,7 +3,7 @@
 # This class is called from github_actions_runner for service config.
 #
 
-class github_actions_runner::config {
+class github_actions_runner::config inherits github_actions_runner {
 
   $ensure_directory = $github_actions_runner::ensure ? {
     'present' => directory,

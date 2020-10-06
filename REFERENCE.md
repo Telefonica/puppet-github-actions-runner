@@ -5,9 +5,11 @@
 **Classes**
 
 * [`github_actions_runner`](#github_actions_runner)
-* [`github_actions_runner::install`](#github_actions_runner_install)
 * [`github_actions_runner::config`](#github_actions_runner_config)
-* [`github_actions_runner::service`](#github_actions_runner_service)
+
+**Defines**
+
+* [`github_actions_runner::instance`](#github_actions_runner_instance)
 
 ## Classes
 
@@ -31,26 +33,11 @@ Enum, Determine if to add or remove the resource.
 Data type: `Absolutepath`
 Location of the base directory for actions runner to be installed.
 
-##### `repo_name`
-
-Data type: `Optional[String]`
-
-actions runner github repository name to serve.
-Default value: `undef`
-
 ##### `org_name`
 
 Data type: `String`
 
 actions runner github organization name.
-
-##### `labels`
-
-Data type: `Optional[Array[String]]`
-
-A list of costum lables to add to a actions runner host.
-
-Default value: `undef`
 
 ##### `hostname`
 
@@ -118,14 +105,24 @@ Data type: `String`
 
 Group to be used in Service and directories.
 
-### github_actions_runner::install
-
-Install the files and packages for the module.
-
 ### github_actions_runner::config
 
 Main path configuration of the module installation.
 
-### github_actions_runner::service
 
-The service setup for this module.
+### github_actions_runner::instance
+
+##### `repo_name`
+
+Data type: `Optional[String]`
+
+actions runner github repository name to serve.
+Default value: `undef`
+
+##### `labels`
+
+Data type: `Optional[Array[String]]`
+
+A list of costum lables to add to a actions runner host.
+
+Default value: `undef`
