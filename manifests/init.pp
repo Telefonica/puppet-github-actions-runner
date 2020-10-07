@@ -56,7 +56,18 @@ class github_actions_runner (
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
-  contain '::github_actions_runner::config'
+  $ensure_directory = $github_actions_runner::ensure ? {
+    'present' => directory,
+    'absent'  => absent,
+  }
+
+  file { $github_actions_runner::root_dir:
+    ensure => $ensure_directory,
+    mode   => '0644',
+    owner  => $github_actions_runner::user,
+    group  => $github_actions_runner::group,
+    force  => true,
+  }
 
   create_resources(github_actions_runner::instance, $github_actions_runner::instances)
 

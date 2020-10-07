@@ -5,7 +5,6 @@
 **Classes**
 
 * [`github_actions_runner`](#github_actions_runner)
-* [`github_actions_runner::config`](#github_actions_runner_config)
 
 **Defines**
 
@@ -105,12 +104,9 @@ Data type: `String`
 
 Group to be used in Service and directories.
 
-### github_actions_runner::config
-
-Main path configuration of the module installation.
-
-
 ### github_actions_runner::instance
+
+#### Parameters
 
 ##### `repo_name`
 

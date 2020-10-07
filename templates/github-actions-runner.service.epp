@@ -1,5 +1,5 @@
 <%- | String $instance_name,
-      String $root_dir,
+      Stdlib::Absolutepath $root_dir,
       String $user,
       String $group,
 | -%>
@@ -15,6 +15,9 @@ KillSignal=SIGTERM
 TimeoutStopSec=5min
 User=<%= $user %>
 Group=<%= $group %>
+
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
