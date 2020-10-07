@@ -1,15 +1,20 @@
+<%- | String $instance_name,
+      String $root_dir,
+      String $user,
+      String $group,
+| -%>
 [Unit]
-Description=github-actions-runner
+Description=github-actions-runner-$instance_name
 After=network.target
 
 [Service]
-ExecStart=<%= $github_actions_runner::root_dir %>/<%= $service_name %>/runsvc.sh
-WorkingDirectory=<%= $github_actions_runner::root_dir %>/<%= $service_name %>
+ExecStart=<%= $root_dir %>/<%= $instance_name %>/runsvc.sh
+WorkingDirectory=<%= $root_dir %>/<%= $instance_name %>
 KillMode=process
 KillSignal=SIGTERM
 TimeoutStopSec=5min
-User=<%= $github_actions_runner::instance::user %>
-Group=<%= $github_actions_runner::instance::group %>
+User=<%= $user %>
+Group=<%= $group %>
 
 [Install]
 WantedBy=multi-user.target

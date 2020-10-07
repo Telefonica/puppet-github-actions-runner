@@ -16,7 +16,7 @@ describe 'github_actions_runner' do
           :user                  => 'test_user',
           :group                 => 'test_group',
           :base_dir_name         => '/tmp/actions-runner',
-          :instances             => { 'first_runner' => { 'labels' => ['test_label1', 'test_label2'], 'repo_name' => 'test_repo'}},
+          :instances             => { 'first_runner' => {}},
         }
       end
 
@@ -24,6 +24,16 @@ describe 'github_actions_runner' do
       it { is_expected.to contain_class('github_actions_runner') }
       it { is_expected.to contain_class('github_actions_runner::config') }
 
+      context 'is expected to create a github_actions_runner root directory' do
+        it do
+          is_expected.to contain_file('/tmp/actions-runner-1.0.1/').with({
+            'ensure' => 'directory',
+            'owner'  => 'test_user',
+            'group'  => 'test_group',
+            'mode'   => '0644',
+          })
+        end
+      end
     end
   end
 end

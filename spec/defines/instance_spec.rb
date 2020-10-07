@@ -4,6 +4,7 @@ describe 'github_actions_runner::instance' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }
+      let(:title) { 'first_runner' }
       let(:pre_condition) { 'include github_actions_runner' }
       let(:params) do
         {
@@ -23,7 +24,7 @@ describe 'github_actions_runner::instance' do
         end
       end
 
-      context 'is expected to create a github_actions_runner root directory' do
+      context 'is expected to create a github_actions_runner instance directory' do
         it do
           is_expected.to contain_file('/tmp/actions-runner-1.0.1/first_runner').with({
             'ensure' => 'directory',
@@ -47,7 +48,7 @@ describe 'github_actions_runner::instance' do
 
       context 'is expected to create a github_actions_runner installation script with config in content' do
         it do
-          is_expected.to contain_file('/tmp/actions-runner-1.0.1/first_runner/configure_install_runner.sh').with_content(/\/tmp\/actions-runner-1.0.1\/config.sh/)
+          is_expected.to contain_file('/tmp/actions-runner-1.0.1/first_runner/configure_install_runner.sh').with_content(/\/tmp\/actions-runner-1.0.1\/first_runner\/config.sh/)
         end
       end
 

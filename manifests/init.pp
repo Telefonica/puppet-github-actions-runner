@@ -22,9 +22,6 @@
 # * labels
 #  Optional[Array[String]], A list of costum lables to add to a runner.
 #
-# * hostname
-#  String, actions runner name.
-#
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
 #
@@ -54,7 +51,6 @@ class github_actions_runner (
   String                    $repository_url,
   String                    $user,
   String                    $group,
-  String                    $hostname = $::facts['hostname'],
   Hash[String, Hash]        $instances,
 ) {
 
