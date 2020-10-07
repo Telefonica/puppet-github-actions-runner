@@ -69,7 +69,7 @@ define github_actions_runner::instance (
     require => File[$github_actions_runner::root_dir],
   }
 
-  archive { $archive_name:
+  archive { "${name}-${archive_name}":
     ensure       => $ensure,
     path         => "/tmp/${archive_name}",
     source       => $source,
@@ -90,7 +90,7 @@ define github_actions_runner::instance (
     require => Archive[$archive_name],
   }
 
-  exec { 'run_configure_install_runner.sh':
+  exec { "${name}-run_configure_install_runner.sh":
     cwd         => "${github_actions_runner::root_dir}/${name}",
     command     => "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh",
     refreshonly => true
