@@ -30,7 +30,6 @@ define github_actions_runner::instance (
   String                    $personal_access_token = $github_actions_runner::personal_access_token,
   String                    $user                  = $github_actions_runner::user,
   String                    $group                 = $github_actions_runner::group,
-  String                    $service_name          = $title,
   Optional[Array[String]]   $labels                = undef,
   Optional[String]          $repo_name             = undef,
 
@@ -61,7 +60,7 @@ define github_actions_runner::instance (
     'absent'  => absent,
   }
 
-  file { "${github_actions_runner::root_dir}/${service_name}":
+  file { "${github_actions_runner::root_dir}/${name}":
     ensure  => $ensure_instance_directory,
     mode    => '0644',
     owner   => $user,
@@ -75,13 +74,13 @@ define github_actions_runner::instance (
     path         => "/tmp/${archive_name}",
     source       => $source,
     extract      => true,
-    extract_path => "${github_actions_runner::root_dir}/${service_name}",
-    creates      => "${github_actions_runner::root_dir}/${service_name}/bin",
+    extract_path => "${github_actions_runner::root_dir}/${name}",
+    creates      => "${github_actions_runner::root_dir}/${name}/bin",
     cleanup      => true,
-    require      => File["${github_actions_runner::root_dir}/${service_name}"],
+    require      => File["${github_actions_runner::root_dir}/${name}"],
   }
 
-  file { "${github_actions_runner::root_dir}/${service_name}/configure_install_runner.sh":
+  file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
     ensure  => $ensure,
     mode    => '0755',
     owner   => $user,
@@ -92,16 +91,16 @@ define github_actions_runner::instance (
   }
 
   exec { 'run_configure_install_runner.sh':
-    cwd         => "${github_actions_runner::root_dir}/${service_name}",
-    command     => "${github_actions_runner::root_dir}/${service_name}/configure_install_runner.sh",
+    cwd         => "${github_actions_runner::root_dir}/${name}",
+    command     => "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh",
     refreshonly => true
   }
 
-  systemd::unit_file { 'github-actions-runner-${service_name}.service':
+  systemd::unit_file { 'github-actions-runner.${name}.service':
     ensure  => $ensure,
     content => epp('github_actions_runner/github-actions-runner.service.epp'),
-    require => [File["${github_actions_runner::root_dir}/${service_name}/configure_install_runner.sh"],Exec['run_configure_install_runner.sh']],
-    notify  => Service["github-actions-runner-${service_name}"],
+    require => [File["${github_actions_runner::root_dir}/${name}/configure_install_runner.sh"],Exec['run_configure_install_runner.sh']],
+    notify  => Service["github-actions-runner-${name}"],
   }
 
   $ensure_service = $ensure ? {
@@ -114,7 +113,7 @@ define github_actions_runner::instance (
     'absent'  => false,
   }
 
-  service { "github-actions-runner-${title}":
+  service { "github-actions-runner-${name}":
     ensure  => $ensure_service,
     enable  => $enable_service,
     require => Class['systemd::systemctl::daemon_reload'],
