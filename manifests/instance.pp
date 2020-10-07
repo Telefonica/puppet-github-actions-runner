@@ -21,7 +21,7 @@
 #  String, actions runner name.
 #
 # * instance_name
-#  String, The instance name as part of the instaces Hash.
+#  String, The instance name as part of the instances Hash.
 #
 # * repo_name
 #  Optional[String], actions runner repository name.
@@ -68,7 +68,7 @@ define github_actions_runner::instance (
     'absent'  => absent,
   }
 
-  file { "${github_actions_runner::root_dir}/${$instance_name}":
+  file { "${github_actions_runner::root_dir}/${instance_name}":
     ensure  => $ensure_instance_directory,
     mode    => '0644',
     owner   => $user,
@@ -77,15 +77,15 @@ define github_actions_runner::instance (
     require => File[$github_actions_runner::root_dir],
   }
 
-  archive { "${$instance_name}-${archive_name}":
+  archive { "${instance_name}-${archive_name}":
     ensure       => $ensure,
     path         => "/tmp/${archive_name}",
     source       => $source,
     extract      => true,
-    extract_path => "${github_actions_runner::root_dir}/${$instance_name}",
-    creates      => "${github_actions_runner::root_dir}/${$instance_name}/bin",
+    extract_path => "${github_actions_runner::root_dir}/${instance_name}",
+    creates      => "${github_actions_runner::root_dir}/${instance_name}/bin",
     cleanup      => true,
-    require      => File["${github_actions_runner::root_dir}/${$instance_name}"],
+    require      => File["${github_actions_runner::root_dir}/${instance_name}"],
   }
 
   file { "${github_actions_runner::root_dir}/${name}/configure_install_runner.sh":
@@ -102,17 +102,17 @@ define github_actions_runner::instance (
       hostname              => $hostname,
       assured_labels        => $assured_labels,
     }),
-    notify  => Exec["${$instance_name}-run_configure_install_runner.sh"],
-    require => Archive["${$instance_name}-${archive_name}"],
+    notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
+    require => Archive["${instance_name}-${archive_name}"],
   }
 
-  exec { "${$instance_name}-run_configure_install_runner.sh":
-    cwd         => "${github_actions_runner::root_dir}/${$instance_name}",
-    command     => "${github_actions_runner::root_dir}/${$instance_name}/configure_install_runner.sh",
+  exec { "${instance_name}-run_configure_install_runner.sh":
+    cwd         => "${github_actions_runner::root_dir}/${instance_name}",
+    command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
     refreshonly => true
   }
 
-  systemd::unit_file { "github-actions-runner.${$instance_name}.service":
+  systemd::unit_file { "github-actions-runner.${instance_name}.service":
     ensure  => $ensure,
     content => epp('github_actions_runner/github-actions-runner.service.epp', {
       instance_name => $instance_name,
@@ -120,9 +120,9 @@ define github_actions_runner::instance (
       user          => $user,
       group         => $group,
     }),
-    require => [File["${github_actions_runner::root_dir}/${$instance_name}/configure_install_runner.sh"],
-                Exec["${$instance_name}-run_configure_install_runner.sh"]],
-    notify  => Service["github-actions-runner-${$instance_name}"],
+    require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
+                Exec["${instance_name}-run_configure_install_runner.sh"]],
+    notify  => Service["github-actions-runner-${instance_name}"],
   }
 
   $ensure_service = $ensure ? {
@@ -135,7 +135,7 @@ define github_actions_runner::instance (
     'absent'  => false,
   }
 
-  service { "github-actions-runner-${$instance_name}":
+  service { "github-actions-runner-${instance_name}":
     ensure  => $ensure_service,
     enable  => $enable_service,
     require => Class['systemd::systemctl::daemon_reload'],
