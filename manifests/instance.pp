@@ -79,7 +79,7 @@ define github_actions_runner::instance (
 
   archive { "${instance_name}-${archive_name}":
     ensure       => $ensure,
-    path         => "/tmp/${archive_name}",
+    path         => "/tmp/${instance_name}-${archive_name}",
     source       => $source,
     extract      => true,
     extract_path => "${github_actions_runner::root_dir}/${instance_name}",
