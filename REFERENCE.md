@@ -104,6 +104,8 @@ Data type: `String`
 
 Group to be used in Service and directories.
 
+## Defines
+
 ### github_actions_runner::instance
 
 #### Parameters

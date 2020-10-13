@@ -1,5 +1,5 @@
 {
-  "name": "tuenti-github_actions_runner",
+  "name": "Telefonica-github_actions_runner",
   "version": "0.2.0",
   "author": "Shimon Ohayon",
   "summary": "Module to configure our GitHub Actions runner on Debian hosts",
