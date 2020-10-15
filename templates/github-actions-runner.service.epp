@@ -4,7 +4,7 @@
       String $group,
 | -%>
 [Unit]
-Description=github-actions-runner-$instance_name
+Description=github-actions-runner-<%= $instance_name %>
 After=network.target
 
 [Service]
