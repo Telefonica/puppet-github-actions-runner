@@ -22,14 +22,14 @@ export RUNNER_ALLOW_RUNASROOT=true
 <%= $root_dir %>/<%= $instance_name %>/config.sh remove \
   --url <%= $url %>                                     \
   --token ${TOKEN}                                      \
-  --name <%= $hostname %> &>/dev/null
+  --name <%= $hostname %>-<%= $instance_name %> &>/dev/null
 
 
 # Configure the runner.
 <%= $root_dir %>/<%= $instance_name %>/config.sh \
   --unattended                                   \
   --replace                                      \
-  --name <%= $hostname %>                        \
+  --name <%= $hostname %>-<%= $instance_name %>  \
   --url <%= $url %>                              \
   --token ${TOKEN}                               \
   <%= $assured_labels %> &>/dev/null
