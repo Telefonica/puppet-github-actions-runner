@@ -122,7 +122,7 @@ define github_actions_runner::instance (
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
                 Exec["${instance_name}-run_configure_install_runner.sh"]],
-    notify  => Service["github-actions-runner-${instance_name}"],
+    notify  => Service["github-actions-runner.${instance_name}.service"],
   }
 
   $ensure_service = $ensure ? {
@@ -135,7 +135,7 @@ define github_actions_runner::instance (
     'absent'  => false,
   }
 
-  service { "github-actions-runner-${instance_name}":
+  service { "github-actions-runner.${instance_name}.service":
     ensure  => $ensure_service,
     enable  => $enable_service,
     require => Class['systemd::systemctl::daemon_reload'],
