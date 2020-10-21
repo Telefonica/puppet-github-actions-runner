@@ -1,10 +1,12 @@
 {
-  "name": "Telefonica-github_actions_runner",
+  "name": "telefonica-github_actions_runner",
   "version": "0.2.2",
   "author": "Shimon Ohayon",
   "summary": "Module to configure our GitHub Actions runner on Debian hosts",
   "license": "Apache-2.0",
   "source": "https://github.com/Telefonica/puppet-github-actions-runner",
+  "project_page": "https://github.com/Telefonica/puppet-github-actions-runner",
+  "issues_url": "https://github.com/Telefonica/puppet-github-actions-runner/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
