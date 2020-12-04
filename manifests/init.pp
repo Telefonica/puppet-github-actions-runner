@@ -52,6 +52,8 @@ class github_actions_runner (
   String                    $user,
   String                    $group,
   Hash[String, Hash]        $instances,
+  String                    $github_domain,
+  String                    $github_api,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"

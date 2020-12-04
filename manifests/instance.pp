@@ -40,7 +40,8 @@ define github_actions_runner::instance (
   String                    $instance_name         = $title,
   Optional[Array[String]]   $labels                = undef,
   Optional[String]          $repo_name             = undef,
-
+  String                    $github_domain         = $github_actions_runner::github_domain,
+  String                    $github_api            = $github_actions_runner::github_api,
 ) {
 
   if $labels {
@@ -51,13 +52,17 @@ define github_actions_runner::instance (
   }
 
   $url = $repo_name ? {
-    undef => "https://github.com/${org_name}",
-    default => "https://github.com/${org_name}/${repo_name}",
+    undef => "${github_domain}/${org_name}",
+    default => "${github_domain}/${org_name}/${repo_name}",
   }
 
-  $token_url = $repo_name ? {
-    undef => "https://api.github.com/repos/${org_name}/actions/runners/registration-token",
-    default => "https://api.github.com/repos/${org_name}/${repo_name}/actions/runners/registration-token",
+  if $repo_name {
+    $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
+  } else {
+    $token_url = $github_api ? {
+      'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
+      default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
+    }
   }
 
   $archive_name =  "${github_actions_runner::package_name}-${github_actions_runner::package_ensure}.tar.gz"
