@@ -80,6 +80,8 @@ define github_actions_runner::instance (
   archive { "${instance_name}-${archive_name}":
     ensure       => $ensure,
     path         => "/tmp/${instance_name}-${archive_name}",
+    user         => $user,
+    group        => $group,
     source       => $source,
     extract      => true,
     extract_path => "${github_actions_runner::root_dir}/${instance_name}",
@@ -107,6 +109,7 @@ define github_actions_runner::instance (
   }
 
   exec { "${instance_name}-run_configure_install_runner.sh":
+    user        => $user,
     cwd         => "${github_actions_runner::root_dir}/${instance_name}",
     command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
     refreshonly => true
