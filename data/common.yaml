@@ -9,4 +9,5 @@ github_actions_runner::personal_access_token: 'PAT'
 github_actions_runner::user: 'root'
 github_actions_runner::group: 'root'
 github_actions_runner::instances: {}
-
+github_actions_runner::github_domain: "https://github.com"
+github_actions_runner::github_api: "https://api.github.com"
