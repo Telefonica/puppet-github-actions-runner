@@ -1,0 +1,19 @@
+name: Run pdk test unit
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  testing:
+    runs-on: self-hosted-novum
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+
+    - name: Run unit tests
+      uses: puppets-epic-show-theatre/action-pdk-test-unit@v1
+      with:
+        # [optional]
+        # A string indicating the Puppet version to validate against, such as "5.4.2" or "5.5".
+        puppet-version: "5.5"
