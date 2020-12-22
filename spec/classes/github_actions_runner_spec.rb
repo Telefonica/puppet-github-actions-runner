@@ -45,7 +45,7 @@ describe 'github_actions_runner' do
 
       context 'is expected to create a github_actions_runner service' do
         it do
-          is_expected.to contain_service('github-actions-runner-first_runner').with('ensure' => 'running', 'enable' => true)
+          is_expected.to contain_service('github-actions-runner.first_runner.service').with('ensure' => 'running', 'enable' => true)
         end
       end
 
