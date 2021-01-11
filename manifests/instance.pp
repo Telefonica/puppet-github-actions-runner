@@ -80,6 +80,8 @@ define github_actions_runner::instance (
   archive { "${instance_name}-${archive_name}":
     ensure       => $ensure,
     path         => "/tmp/${instance_name}-${archive_name}",
+    user         => $user,
+    group        => $group,
     source       => $source,
     extract      => true,
     extract_path => "${github_actions_runner::root_dir}/${instance_name}",
@@ -106,7 +108,17 @@ define github_actions_runner::instance (
     require => Archive["${instance_name}-${archive_name}"],
   }
 
+  exec { "${instance_name}-ownership":
+    user        => $user,
+    cwd         => "${github_actions_runner::root_dir}",
+    command     => "/bin/chown -R ${user}:${group} ${github_actions_runner::root_dir}/${instance_name}",
+    refreshonly => true,
+    path        => "/tmp/${instance_name}-${archive_name}",
+    subscribe   => Archive["${instance_name}-${archive_name}"]
+  }
+
   exec { "${instance_name}-run_configure_install_runner.sh":
+    user        => $user,
     cwd         => "${github_actions_runner::root_dir}/${instance_name}",
     command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
     refreshonly => true

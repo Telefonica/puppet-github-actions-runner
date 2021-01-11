@@ -49,6 +49,34 @@ describe 'github_actions_runner' do
         end
       end
 
+      context 'is expected to contain archive' do
+        it do
+          is_expected.to contain_archive("first_runner-test_package-1.0.1.tar.gz").with({
+            'ensure' => 'present',
+            'user'   => 'test_user',
+            'group'  => 'test_group',
+          })
+        end
+      end
+
+      context 'is expected to contain an ownership exec' do
+        it do
+          is_expected.to contain_exec('first_runner-ownership').with({
+            'user'    => 'test_user',
+            'command' => '/bin/chown -R test_user:test_group /tmp/actions-runner-1.0.1/first_runner',
+          })
+        end
+      end
+
+      context 'is expected to contain a Run exec' do
+        it do
+          is_expected.to contain_exec('first_runner-run_configure_install_runner.sh').with({
+            'user'    => 'test_user',
+            'command' => '/tmp/actions-runner-1.0.1/first_runner/configure_install_runner.sh',
+          })
+        end
+      end
+
       context 'is expected to create a github_actions_runner installation script' do
         it do
           is_expected.to contain_file('/tmp/actions-runner-1.0.1/first_runner/configure_install_runner.sh').with({

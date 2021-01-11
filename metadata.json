@@ -1,6 +1,6 @@
 {
   "name": "telefonica-github_actions_runner",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "Shimon Ohayon",
   "summary": "Module to configure our GitHub Actions runner on Debian hosts",
   "license": "Apache-2.0",
