@@ -1,3 +1,5 @@
+![PDK Test Unit](https://github.com/Telefonica/puppet-github-actions-runner/workflows/Run%20pdk%20test%20unit/badge.svg?branch=master)
+
 # GitHub Actions Runner
 
 Automatic configuration for running GitHub Actions on Debian hosts as a service
