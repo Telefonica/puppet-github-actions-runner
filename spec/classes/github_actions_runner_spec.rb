@@ -40,13 +40,13 @@ describe 'github_actions_runner' do
       context 'is expected to create a github_actions_runner root directory with test user' do
         let(:params) do
           super().merge({ 'user'  => 'test_user',
-                          'group' => 'group_user'})
+                          'group' => 'test_group'})
         end
         it do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0').with({
             'ensure' => 'directory',
             'owner'  => 'test_user',
-            'group'  => 'group_user',
+            'group'  => 'test_group',
             'mode'   => '0644',
           })
         end
@@ -66,13 +66,13 @@ describe 'github_actions_runner' do
       context 'is expected to create a github_actions_runner instance directory with test user' do
         let(:params) do
           super().merge({ 'user'  => 'test_user',
-                          'group' => 'group_user'})
+                          'group' => 'test_group'})
         end
         it do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner').with({
             'ensure' => 'directory',
             'owner'  => 'test_user',
-            'group'  => 'group_user',
+            'group'  => 'test_group',
             'mode'   => '0644',
           })
         end
