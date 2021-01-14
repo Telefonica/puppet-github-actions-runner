@@ -71,8 +71,7 @@ If you don't specify repository name , make sure you `Personal Access Token` is 
 
 ## Development
 
-This module development should be just like any other puppet modules.
-Use PDK to run unit tests: `pdk test unit`
+There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see Puppet Forge [module contribution guide](https://puppet.com/docs/puppet/7.1/modules_publishing.html).
 
 ## License
 
