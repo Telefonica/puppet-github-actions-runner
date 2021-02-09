@@ -13,14 +13,8 @@
 # * base_dir_name
 #  Absolutepath, Location of the base directory for actions runner to be installed.
 #
-# * repo_name
-#  Optional[String], actions runner repository name.
-#
 # * org_name
 #  String, actions runner org name.
-#
-# * labels
-#  Optional[Array[String]], A list of costum lables to add to a runner.
 #
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
