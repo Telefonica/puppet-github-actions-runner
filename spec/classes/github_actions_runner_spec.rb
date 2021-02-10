@@ -194,6 +194,90 @@ describe 'github_actions_runner' do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(/authorization: token test_PAT/)
         end
       end
+
+      context 'is expected to create a github_actions_runner installation with proxy settings in systemd globally in init.pp' do
+        let(:params) do
+          super().merge(
+             'http_proxy' => 'http://proxy.local',
+             'https_proxy' => 'http://proxy.local',
+             'no_proxy' => 'example.com',
+             'instances' => {
+               'first_runner' => {
+                 'labels' => ['test_label1'],
+                 'repo_name' => 'test_repo',
+               },
+             },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="http_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="https_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="no_proxy=example.com"})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation with proxy settings in systemd globally in init.pp overwriting in a instance' do
+        let(:params) do
+          super().merge(
+             'http_proxy' => 'http://proxy.local',
+             'https_proxy' => 'http://proxy.local',
+             'no_proxy' => 'example.com',
+             'instances' => {
+               'first_runner' => {
+                 'labels' => ['test_label1'],
+                 'repo_name' => 'test_repo',
+                 'http_proxy' => 'http://newproxy.local',
+               },
+             },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="http_proxy=http://newproxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="https_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="no_proxy=example.com"})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation with proxy settings in systemd' do
+        let(:params) do
+          super().merge(
+             'instances' => {
+               'first_runner' => {
+                 'labels' => ['test_label1'],
+                 'repo_name' => 'test_repo',
+                 'http_proxy' => 'http://proxy.local',
+                 'https_proxy' => 'http://proxy.local',
+                 'no_proxy' => 'example.com'},
+               },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="http_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="https_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with_content(%r{Environment="no_proxy=example.com"})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation without proxy settings in systemd' do
+        let(:params) do
+          super().merge(
+             'instances' => {
+               'first_runner' => {
+                 'labels' => ['test_label1'],
+                 'repo_name' => 'test_repo'},
+               },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').without_content(%r{Environment="http_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').without_content(%r{Environment="https_proxy=http://proxy.local"})
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').without_content(%r{Environment="no_proxy=example.com"})
+        end
+      end
     end
   end
 end

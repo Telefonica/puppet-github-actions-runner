@@ -34,6 +34,18 @@
 # * group
 # String, Group to be used in Service and directories.
 #
+# * instances
+# Hash[String, Hash], Github Runner Instances to be managed.
+#
+# * http_proxy
+# Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
+#
+# * https_proxy
+# Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+#
+# * no_proxy
+# Optional[String], Comma separated list of hosts that shoudl not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+#
 
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
@@ -46,6 +58,9 @@ class github_actions_runner (
   String                    $user,
   String                    $group,
   Hash[String, Hash]        $instances,
+  Optional[String]          $http_proxy = undef,
+  Optional[String]          $https_proxy = undef,
+  Optional[String]          $no_proxy = undef,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
