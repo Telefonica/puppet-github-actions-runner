@@ -73,7 +73,6 @@ github_actions_runner::user: 'root'
 github_actions_runner::group: 'root'
 github_actions_runner::instances:
   first_instance:
-    use_proxy: true
     http_proxy: http://proxy.local
     https_proxy: http://proxy.local
     no_proxy: example.com
