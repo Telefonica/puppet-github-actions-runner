@@ -60,6 +60,25 @@ github_actions_runner::instances:
     personal_access_token: other_secret
 ```
 
+In case you need to set proxy in one instance:
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.272.0'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::org_name: 'github_org'
+github_actions_runner::personal_access_token: 'PAT'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::instances:
+  first_instance:
+    http_proxy: http://proxy.local
+    https_proxy: http://proxy.local
+    no_proxy: example.com
+    labels:
+      - self-hosted-custom1
+```
 
 ## Limitations
 

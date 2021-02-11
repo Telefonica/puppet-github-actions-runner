@@ -23,6 +23,15 @@
 # * instance_name
 # String, The instance name as part of the instances Hash.
 #
+# * http_proxy
+# Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
+#
+# * https_proxy
+# Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+#
+# * no_proxy
+# Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
+#
 # * repo_name
 # Optional[String], actions runner repository name.
 #
@@ -38,6 +47,9 @@ define github_actions_runner::instance (
   String                    $group                 = $github_actions_runner::group,
   String                    $hostname              = $::facts['hostname'],
   String                    $instance_name         = $title,
+  Optional[String]          $http_proxy            = $github_actions_runner::http_proxy,
+  Optional[String]          $https_proxy           = $github_actions_runner::https_proxy,
+  Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Array[String]]   $labels                = undef,
   Optional[String]          $repo_name             = undef,
 
@@ -110,7 +122,7 @@ define github_actions_runner::instance (
 
   exec { "${instance_name}-ownership":
     user        => $user,
-    cwd         => "${github_actions_runner::root_dir}",
+    cwd         => $github_actions_runner::root_dir,
     command     => "/bin/chown -R ${user}:${group} ${github_actions_runner::root_dir}/${instance_name}",
     refreshonly => true,
     path        => "/tmp/${instance_name}-${archive_name}",
@@ -131,6 +143,9 @@ define github_actions_runner::instance (
       root_dir      => $github_actions_runner::root_dir,
       user          => $user,
       group         => $group,
+      http_proxy    => $http_proxy,
+      https_proxy   => $https_proxy,
+      no_proxy      => $no_proxy,
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
                 Exec["${instance_name}-run_configure_install_runner.sh"]],

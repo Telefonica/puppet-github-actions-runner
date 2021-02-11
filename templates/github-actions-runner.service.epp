@@ -2,12 +2,24 @@
       Stdlib::Absolutepath $root_dir,
       String $user,
       String $group,
+      Optional[String] $http_proxy = undef,
+      Optional[String] $https_proxy = undef,
+      Optional[String] $no_proxy = undef
 | -%>
 [Unit]
 Description=github-actions-runner-<%= $instance_name %>
 After=network.target
 
 [Service]
+<% if $http_proxy { -%>
+Environment="http_proxy=<%= $http_proxy %>"
+<% } -%>
+<% if $https_proxy { -%>
+Environment="https_proxy=<%= $https_proxy %>"
+<% } -%>
+<% if $no_proxy { -%>
+Environment="no_proxy=<%= $no_proxy %>"
+<% } -%>
 ExecStart=<%= $root_dir %>/<%= $instance_name %>/runsvc.sh
 WorkingDirectory=<%= $root_dir %>/<%= $instance_name %>
 KillMode=process
