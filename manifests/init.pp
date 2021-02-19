@@ -58,6 +58,8 @@ class github_actions_runner (
   String                    $user,
   String                    $group,
   Hash[String, Hash]        $instances,
+  String                    $github_domain,
+  String                    $github_api,
   Optional[String]          $http_proxy = undef,
   Optional[String]          $https_proxy = undef,
   Optional[String]          $no_proxy = undef,
