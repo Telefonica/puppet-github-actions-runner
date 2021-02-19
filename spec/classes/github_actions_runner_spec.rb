@@ -293,6 +293,52 @@ describe 'github_actions_runner' do
           is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').without_content(%r{Environment="no_proxy=example.com"})
         end
       end
+
+      context 'is expected to create a github_actions_runner installation with another URLs for domain and API' do
+        let(:params) do
+          super().merge(
+            'github_domain' => 'https://git.example.com',
+            'github_api' => 'https://git.example.com/api/v3',
+            'instances' => {
+              'first_runner' => {
+                'labels' => ['test_label1'],
+                'repo_name' => 'test_repo',
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--url https://git.example.com})
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://git.example.com/api/v3.* \| jq -r .token})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation with another URLs for domain and API per instance' do
+        let(:params) do
+          super().merge(
+            'instances' => {
+              'first_runner' => {
+                'labels' => ['test_label1'],
+                'repo_name' => 'test_repo',
+              },
+              'second_runner' => {
+                'labels' => ['test_label1'],
+                'repo_name' => 'test_repo',
+                'github_domain' => 'https://git.example.foo',
+                'github_api' => 'https://git.example.foo/api/v2',
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--url https://github.com})
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://api.github.com/.* \| jq -r .token})
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/second_runner/configure_install_runner.sh').with_content(%r{--url https://git.example.foo})
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/second_runner/configure_install_runner.sh').with_content(%r{https://git.example.foo/api/v2/.* \| jq -r .token})
+        end
+      end
     end
   end
 end
