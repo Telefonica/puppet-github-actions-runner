@@ -80,6 +80,12 @@ github_actions_runner::instances:
       - self-hosted-custom1
 ```
 
+In case you are using Github Enterprise Server , you can define these two parameters to specify the correct urls:
+```yaml
+github_actions_runner::github_domain: "https://git.example.com"
+github_actions_runner::github_api: "https://git.example.com/api/v3"
+```
+
 ## Limitations
 
 Tested on Debian 9 stretch hosts only.

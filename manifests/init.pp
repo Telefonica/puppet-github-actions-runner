@@ -37,6 +37,12 @@
 # * instances
 # Hash[String, Hash], Github Runner Instances to be managed.
 #
+# * github_domain
+# String, Base URL for Github Domain.
+#
+# * github_api
+# String, Base URL for Github API.
+#
 # * http_proxy
 # Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
 #
@@ -58,6 +64,8 @@ class github_actions_runner (
   String                    $user,
   String                    $group,
   Hash[String, Hash]        $instances,
+  String                    $github_domain,
+  String                    $github_api,
   Optional[String]          $http_proxy = undef,
   Optional[String]          $https_proxy = undef,
   Optional[String]          $no_proxy = undef,
