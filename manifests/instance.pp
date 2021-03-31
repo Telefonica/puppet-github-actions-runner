@@ -82,6 +82,8 @@ define github_actions_runner::instance (
   } elsif $enterprise_name {
     $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
     $url = "${github_domain}/enterprises/${enterprise_name}"
+  } else {
+    fail("Either 'org_name' or 'enterprise_name' is required to create runner instances")
   }
 
   $archive_name =  "${github_actions_runner::package_name}-${github_actions_runner::package_ensure}.tar.gz"
