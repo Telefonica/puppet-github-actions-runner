@@ -107,11 +107,8 @@ Note, your `personal_access_token` has to contain the `admin:enterprise` permiss
 
 ## Limitations
 
-Tested on Debian 9 stretch hosts only.
-full list of operating systems support and requirements are described in `metadata.json` file.
-
-
-
+Tested on Debian 9 stretch and CentOS7 hosts.
+Full list of operating systems support and requirements are described in `metadata.json` file.
 
 ## Development
 
