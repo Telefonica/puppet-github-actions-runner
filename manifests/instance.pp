@@ -41,7 +41,6 @@
 
 define github_actions_runner::instance (
   Enum['present', 'absent'] $ensure                = 'present',
-  String                    $org_name              = $github_actions_runner::org_name,
   String                    $personal_access_token = $github_actions_runner::personal_access_token,
   String                    $user                  = $github_actions_runner::user,
   String                    $group                 = $github_actions_runner::group,
@@ -53,8 +52,9 @@ define github_actions_runner::instance (
   Optional[String]          $https_proxy           = $github_actions_runner::https_proxy,
   Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Array[String]]   $labels                = undef,
-  Optional[String]          $repo_name             = undef,
   Optional[String]          $enterprise_name       = $github_actions_runner::enterprise_name,
+  Optional[String]          $org_name              = $github_actions_runner::org_name,
+  Optional[String]          $repo_name             = undef,
 ) {
 
   if $labels {
