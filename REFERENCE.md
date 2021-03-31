@@ -129,7 +129,15 @@ Data type: `String`
 
 actions runner github organization name.
 
-Default value: `github_actions_runner::org_name`
+Default value: `undef`
+
+##### `enterprise_name`
+
+Data type: `String`
+
+enterprise name for global runners
+
+Default value: `undef`
 
 ##### `personal_access_token`
 
