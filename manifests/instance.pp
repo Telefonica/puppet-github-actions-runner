@@ -47,14 +47,14 @@ define github_actions_runner::instance (
   String                    $group                 = $github_actions_runner::group,
   String                    $hostname              = $::facts['hostname'],
   String                    $instance_name         = $title,
+  String                    $github_domain         = $github_actions_runner::github_domain,
+  String                    $github_api            = $github_actions_runner::github_api,
   Optional[String]          $http_proxy            = $github_actions_runner::http_proxy,
   Optional[String]          $https_proxy           = $github_actions_runner::https_proxy,
   Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Array[String]]   $labels                = undef,
   Optional[String]          $repo_name             = undef,
   Optional[String]          $enterprise_name       = $github_actions_runner::enterprise_name,
-  String                    $github_domain         = $github_actions_runner::github_domain,
-  String                    $github_api            = $github_actions_runner::github_api,
 ) {
 
   if $labels {
@@ -70,7 +70,7 @@ define github_actions_runner::instance (
   } elsif $repo_name {
     $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
     $url = "${github_domain}/${org_name}/${repo_name}"
-  } else $org_name {
+  } else {
     $token_url = $github_api ? {
       'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
       default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
