@@ -52,6 +52,7 @@ define github_actions_runner::instance (
   Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Array[String]]   $labels                = undef,
   Optional[String]          $repo_name             = undef,
+  Optional[String]          $enterprise_name       = $github_actions_runner::enterprise_name,
   String                    $github_domain         = $github_actions_runner::github_domain,
   String                    $github_api            = $github_actions_runner::github_api,
 ) {
@@ -63,18 +64,18 @@ define github_actions_runner::instance (
     $assured_labels = ''
   }
 
-  $url = $repo_name ? {
-    undef => "${github_domain}/${org_name}",
-    default => "${github_domain}/${org_name}/${repo_name}",
-  }
-
-  if $repo_name {
+  if $enterprise_name {
+    $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
+    $url = "${github_domain}/enterprises/${enterprise_name}"
+  } elsif $repo_name {
     $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
-  } else {
+    $url = "${github_domain}/${org_name}/${repo_name}"
+  } else $org_name {
     $token_url = $github_api ? {
       'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
       default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
     }
+    $url = "${github_domain}/${org_name}"
   }
 
   $archive_name =  "${github_actions_runner::package_name}-${github_actions_runner::package_ensure}.tar.gz"

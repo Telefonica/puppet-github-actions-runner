@@ -38,6 +38,12 @@ Data type: `String`
 
 actions runner github organization name.
 
+##### `enterprise_name`
+
+Data type: `String`
+
+enterprise name for global runners
+
 ##### `hostname`
 
 Data type: `String`
