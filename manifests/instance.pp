@@ -78,6 +78,7 @@ define github_actions_runner::instance (
         default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
       }
       $url = "${github_domain}/${org_name}"
+    }
   } elsif $enterprise_name {
     $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
     $url = "${github_domain}/enterprises/${enterprise_name}"
