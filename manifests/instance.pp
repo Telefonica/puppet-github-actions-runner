@@ -67,18 +67,20 @@ define github_actions_runner::instance (
     $assured_labels = ''
   }
 
-  if $enterprise_name {
-    $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
-    $url = "${github_domain}/enterprises/${enterprise_name}"
-  } elsif $repo_name {
+  if $repo_name {
     $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
     $url = "${github_domain}/${org_name}/${repo_name}"
-  } else {
+  } elsif $org_name {
     $token_url = $github_api ? {
       'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
       default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
     }
     $url = "${github_domain}/${org_name}"
+  } elsif $enterprise_name {
+    $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
+    $url = "${github_domain}/enterprises/${enterprise_name}"
+  } else {
+    fail("At least one of 'repo_name', 'org_name', 'enterprise_name' is required to create runner instances.")
   }
 
   $archive_name =  "${github_actions_runner::package_name}-${github_actions_runner::package_ensure}.tar.gz"
