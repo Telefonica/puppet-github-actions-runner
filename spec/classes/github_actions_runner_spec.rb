@@ -87,12 +87,6 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a github_actions_runner service' do
-        it do
-          is_expected.to contain_service('github-actions-runner.first_runner.service').with('ensure' => 'running', 'enable' => true)
-        end
-      end
-
       context 'is expected to contain archive' do
         it do
           is_expected.to contain_archive('first_runner-actions-runner-linux-x64-2.272.0.tar.gz').with(
@@ -205,6 +199,64 @@ describe 'github_actions_runner' do
 
         it do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{authorization: token test_PAT})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner with service active and enabled' do
+        let(:params) do
+          super().merge(
+            'http_proxy' => 'http://proxy.local',
+            'https_proxy' => 'http://proxy.local',
+            'no_proxy' => 'example.com',
+            'instances' => {
+              'first_runner' => {
+                'labels' => ['test_label1'],
+                'repo_name' => 'test_repo',
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with(
+            'ensure' => 'present',
+            'enable' => true,
+            'active' => true,
+          )
+        end
+      end
+
+      context 'is expected to remove github_actions_runner unit_file and other resources' do
+        let(:params) do
+          super().merge(
+            'http_proxy' => 'http://proxy.local',
+            'https_proxy' => 'http://proxy.local',
+            'no_proxy' => 'example.com',
+            'instances' => {
+              'first_runner' => {
+                'ensure' => 'absent',
+                'labels' => ['test_label1'],
+                'repo_name' => 'test_repo',
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').with(
+            'ensure' => 'absent',
+            'enable' => false,
+            'active' => false,
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner').with(
+            'ensure' => 'absent',
+          )
+          is_expected.to contain_archive('first_runner-actions-runner-linux-x64-2.272.0.tar.gz').with(
+            'ensure' => 'absent',
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
+            'ensure' => 'absent',
+          )
         end
       end
 
