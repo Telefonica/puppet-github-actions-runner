@@ -10,6 +10,6 @@ fixtures:
       ref: "v1.1.2"
     systemd:
       repo: "https://github.com/camptocamp/puppet-systemd.git"
-      ref: "1.1.1"
+      ref: "2.7.0"
 
 
