@@ -6,10 +6,10 @@
 #  Enum, Determine if to add or remove the resource.
 #
 # * org_name
-# String, actions runner org name.(Default: Value set by github_actions_runner Class)
+# Optional[String], org name for organization level runners. (Default: Value set by github_actions_runner Class)
 #
 # * enterprise_name
-#  String, enterprise name for global runners
+#  Optional[String], enterprise name for global runners. (Default: Value set by github_actions_runner Class)
 #
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)

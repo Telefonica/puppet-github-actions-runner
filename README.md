@@ -2,7 +2,7 @@
 
 # GitHub Actions Runner
 
-Automatic configuration for running GitHub Actions on Debian hosts as a service
+Automatic configuration for running GitHub Actions as a service
 
 #### Table of Contents
 
