@@ -1,6 +1,6 @@
 {
   "name": "telefonica-github_actions_runner",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "Shimon Ohayon",
   "summary": "Module to configure our GitHub Actions runner on Debian hosts",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     },
     {
       "name": "camptocamp/systemd",
-      "version_requirement": ">= 1.1.1 < 3.0.0"
+      "version_requirement": ">= 2.7.0 < 3.0.0"
     },
     {
       "name": "puppet-archive",

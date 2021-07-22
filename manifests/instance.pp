@@ -150,8 +150,20 @@ define github_actions_runner::instance (
     refreshonly => true
   }
 
+  $active_service = $ensure ? {
+    'present' => true,
+    'absent'  => false,
+  }
+
+  $enable_service = $ensure ? {
+    'present' => true,
+    'absent'  => false,
+  }
+
   systemd::unit_file { "github-actions-runner.${instance_name}.service":
     ensure  => $ensure,
+    enable  => $enable_service,
+    active  => $active_service,
     content => epp('github_actions_runner/github-actions-runner.service.epp', {
       instance_name => $instance_name,
       root_dir      => $github_actions_runner::root_dir,
@@ -163,23 +175,6 @@ define github_actions_runner::instance (
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
                 Exec["${instance_name}-run_configure_install_runner.sh"]],
-    notify  => Service["github-actions-runner.${instance_name}.service"],
-  }
-
-  $ensure_service = $ensure ? {
-    'present' => running,
-    'absent'  => stopped,
-  }
-
-  $enable_service = $ensure ? {
-    'present' => true,
-    'absent'  => false,
-  }
-
-  service { "github-actions-runner.${instance_name}.service":
-    ensure  => $ensure_service,
-    enable  => $enable_service,
-    require => Class['systemd::systemctl::daemon_reload'],
   }
 
 }
