@@ -2,7 +2,7 @@
 # ===========================
 #
 # Manages actions_runner service and configuration
-# All default Can be view at the `modules/actions_runner/data/common.yaml` file.
+# All defaults can be viewed in the `modules/actions_runner/data/common.yaml` file.
 #
 # Parameters
 # ----------
@@ -15,6 +15,9 @@
 #
 # * org_name
 #  String, actions runner org name.
+#
+# * enterprise_name
+#  String, enterprise name for global runners
 #
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
@@ -56,7 +59,6 @@
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
   Stdlib::Absolutepath      $base_dir_name,
-  String                    $org_name,
   String                    $personal_access_token,
   String                    $package_name,
   String                    $package_ensure,
@@ -66,6 +68,8 @@ class github_actions_runner (
   Hash[String, Hash]        $instances,
   String                    $github_domain,
   String                    $github_api,
+  Optional[String]          $enterprise_name = undef,
+  Optional[String]          $org_name = undef,
   Optional[String]          $http_proxy = undef,
   Optional[String]          $https_proxy = undef,
   Optional[String]          $no_proxy = undef,

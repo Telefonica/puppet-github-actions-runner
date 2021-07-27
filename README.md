@@ -2,11 +2,13 @@
 
 # GitHub Actions Runner
 
-Automatic configuration for running GitHub Actions on Debian hosts as a service
+Automatic configuration for running GitHub Actions as a service
 
 #### Table of Contents
 
 1. [Description](#description)
+    - [Hiera configuration examples](#hiera-configuration-examples)
+    - [Github Enterprise examples](#github-enterprise-examples)
 2. [Limitations - OS compatibility, etc.](#limitations)
 3. [Development - Guide for contributing to the module](#development)
 
@@ -14,85 +16,99 @@ Automatic configuration for running GitHub Actions on Debian hosts as a service
 
 This module will setup all of the files and configuration needed for GitHub Actions runner to work on any Debian 9 hosts.
 
-### hiera configuration
+### hiera configuration examples
 
-This module supports configuration through hiera. The following example
-creates repository level Actions runners.
+This module supports configuration through hiera. 
+
+#### Creating an organization level Actions runner
 
 ```yaml
 github_actions_runner::ensure: present
 github_actions_runner::base_dir_name: '/data/actions-runner'
 github_actions_runner::package_name: 'actions-runner-linux-x64'
-github_actions_runner::package_ensure: '2.272.0'
+github_actions_runner::package_ensure: '2.277.1'
 github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
-github_actions_runner::org_name: 'github_org'
+github_actions_runner::org_name: 'my_github_organization'
 github_actions_runner::personal_access_token: 'PAT'
 github_actions_runner::user: 'root'
 github_actions_runner::group: 'root'
 github_actions_runner::instances:
-  first_instance:
+  example_org_instance:
     labels:
       - self-hosted-custom
 ```
 
-You can also override some of the keys on the instance level
+Note, your `personal_access_token` has to contain the `admin:org` permission.
+
+#### Creating an additional repository level Actions runner
 ```yaml
-github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
-github_actions_runner::package_name: 'actions-runner-linux-x64'
-github_actions_runner::package_ensure: '2.272.0'
-github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
-github_actions_runner::org_name: 'github_org'
-github_actions_runner::personal_access_token: 'PAT'
-github_actions_runner::user: 'root'
-github_actions_runner::group: 'root'
 github_actions_runner::instances:
-  first_instance:
+  example_org_instance:
     labels:
       - self-hosted-custom1
-  second_instance:
-    ensure: absent
-  third_instance:
-    labels:
-      - self-hosted-custom3
+  example_repo_instance:
     repo_name: myrepo
-    org_name: other_org
-    personal_access_token: other_secret
+    labels:
+      - self-hosted-custom2
 ```
 
-In case you need to set proxy in one instance:
+Note, your `personal_access_token` has to contain the `repo` permission.
+    
+#### Instance level overwrites
 ```yaml
-github_actions_runner::ensure: present
-github_actions_runner::base_dir_name: '/data/actions-runner'
-github_actions_runner::package_name: 'actions-runner-linux-x64'
-github_actions_runner::package_ensure: '2.272.0'
-github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
-github_actions_runner::org_name: 'github_org'
-github_actions_runner::personal_access_token: 'PAT'
-github_actions_runner::user: 'root'
-github_actions_runner::group: 'root'
 github_actions_runner::instances:
-  first_instance:
-    http_proxy: http://proxy.local
-    https_proxy: http://proxy.local
+  example_org_instance:
+    ensure: absent
+    labels:
+      - self-hosted-custom1
+  example_repo_instance:
+    org_name: overwritten_orgnization
+    repo_name: myrepo
+    labels:
+      - self-hosted-custom2
+```
+
+#### Adding a global proxy and overwriting an instance level proxy
+```yaml
+github_actions_runner::http_proxy: http://proxy.local
+github_actions_runner::https_proxy: http://proxy.local
+github_actions_runner::instances:
+  example_org_instance:
+    http_proxy: http://instance_specific_proxy.local
+    https_proxy: http://instance_specific_proxy.local
     no_proxy: example.com
     labels:
       - self-hosted-custom1
 ```
 
-In case you are using Github Enterprise Server , you can define these two parameters to specify the correct urls:
+### Github Enterprise examples
+To use the module with Github Enterprise Server, you have to define these parameters:
 ```yaml
 github_actions_runner::github_domain: "https://git.example.com"
 github_actions_runner::github_api: "https://git.example.com/api/v3"
 ```
 
+In addition to the runner configuration examples above, you can also configure runners 
+on the enterprise level by setting a value for `enterprise_name`, for example:
+```yaml
+github_actions_runner::ensure: present
+github_actions_runner::base_dir_name: '/data/actions-runner'
+github_actions_runner::package_name: 'actions-runner-linux-x64'
+github_actions_runner::package_ensure: '2.277.1'
+github_actions_runner::repository_url: 'https://github.com/actions/runner/releases/download'
+github_actions_runner::enterprise_name: 'enterprise_name'
+github_actions_runner::personal_access_token: 'PAT'
+github_actions_runner::user: 'root'
+github_actions_runner::group: 'root'
+github_actions_runner::instances:
+```
+
+Note, your `personal_access_token` has to contain the `admin:enterprise` permission.
+
 ## Limitations
 
-Tested on Debian 9 stretch hosts only.
-full list of operating systems support and requirements are described in `metadata.json` file.
-
-
-If you don't specify repository name , make sure you `Personal Access Token` is org level admin.
+Tested on Debian 9 stretch and CentOS7 hosts.
+Full list of operating systems support and requirements are described in `metadata.json` file.
 
 ## Development
 

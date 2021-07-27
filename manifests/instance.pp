@@ -6,7 +6,10 @@
 #  Enum, Determine if to add or remove the resource.
 #
 # * org_name
-# String, actions runner org name.(Default: Value set by github_actions_runner Class)
+# Optional[String], org name for organization level runners. (Default: Value set by github_actions_runner Class)
+#
+# * enterprise_name
+#  Optional[String], enterprise name for global runners. (Default: Value set by github_actions_runner Class)
 #
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
@@ -41,19 +44,20 @@
 
 define github_actions_runner::instance (
   Enum['present', 'absent'] $ensure                = 'present',
-  String                    $org_name              = $github_actions_runner::org_name,
   String                    $personal_access_token = $github_actions_runner::personal_access_token,
   String                    $user                  = $github_actions_runner::user,
   String                    $group                 = $github_actions_runner::group,
   String                    $hostname              = $::facts['hostname'],
   String                    $instance_name         = $title,
+  String                    $github_domain         = $github_actions_runner::github_domain,
+  String                    $github_api            = $github_actions_runner::github_api,
   Optional[String]          $http_proxy            = $github_actions_runner::http_proxy,
   Optional[String]          $https_proxy           = $github_actions_runner::https_proxy,
   Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
   Optional[Array[String]]   $labels                = undef,
+  Optional[String]          $enterprise_name       = $github_actions_runner::enterprise_name,
+  Optional[String]          $org_name              = $github_actions_runner::org_name,
   Optional[String]          $repo_name             = undef,
-  String                    $github_domain         = $github_actions_runner::github_domain,
-  String                    $github_api            = $github_actions_runner::github_api,
 ) {
 
   if $labels {
@@ -63,18 +67,23 @@ define github_actions_runner::instance (
     $assured_labels = ''
   }
 
-  $url = $repo_name ? {
-    undef => "${github_domain}/${org_name}",
-    default => "${github_domain}/${org_name}/${repo_name}",
-  }
 
-  if $repo_name {
-    $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
-  } else {
-    $token_url = $github_api ? {
-      'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
-      default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
+  if $org_name {
+    if $repo_name {
+      $token_url = "${github_api}/repos/${org_name}/${repo_name}/actions/runners/registration-token"
+      $url = "${github_domain}/${org_name}/${repo_name}"
+    } else {
+      $token_url = $github_api ? {
+        'https://api.github.com' => "${github_api}/repos/${org_name}/actions/runners/registration-token",
+        default => "${github_api}/orgs/${org_name}/actions/runners/registration-token",
+      }
+      $url = "${github_domain}/${org_name}"
     }
+  } elsif $enterprise_name {
+    $token_url = "${github_api}/enterprises/${enterprise_name}/actions/runners/registration-token"
+    $url = "${github_domain}/enterprises/${enterprise_name}"
+  } else {
+    fail("Either 'org_name' or 'enterprise_name' is required to create runner instances")
   }
 
   $archive_name =  "${github_actions_runner::package_name}-${github_actions_runner::package_ensure}.tar.gz"
