@@ -193,7 +193,8 @@ describe 'github_actions_runner' do
 
       context 'is expected to create a github_actions_runner installation script with test_enterprise in content' do
         let(:params) do
-          super().merge('enterprise_name' => 'test_enterprise')
+          super().merge('org_name'        => undef,
+                        'enterprise_name' => 'test_enterprise')
         end
 
         it do
