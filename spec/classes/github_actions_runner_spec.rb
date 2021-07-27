@@ -7,8 +7,19 @@ describe 'github_actions_runner' do
       let(:params) do
         {
           'instances' => {
+            'first_runner' => {},
+          },
+        }
+      end
+ 
+      it { is_expected.to compile.and_raise_error(/Either 'org_name' or 'enterprise_name' is required to create runner instances/) }
+
+      let(:params) do
+        {
+          'org_name'  => 'github_org',
+          'instances' => {
             'first_runner' => {
-              'labels' => ['test_label1', 'test_label2'],
+              'labels'    => ['test_label1', 'test_label2'],
               'repo_name' => 'test_repo',
             },
           },
@@ -170,13 +181,23 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a github_actions_runner installation script with test_org in content ' do
+      context 'is expected to create a github_actions_runner installation script with test_org in content' do
         let(:params) do
           super().merge('org_name' => 'test_org')
         end
 
         it do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://github.com/test_org/test_repo})
+        end
+      end
+
+      context 'is expected to create a github_actions_runner installation script with test_enterprise in content' do
+        let(:params) do
+          super().merge('enterprise_name' => 'test_enterprise')
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://github.com/enterprises/test_enterprise})
         end
       end
 
