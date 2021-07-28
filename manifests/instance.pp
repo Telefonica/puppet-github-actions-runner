@@ -41,7 +41,6 @@
 # * labels
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
-
 define github_actions_runner::instance (
   Enum['present', 'absent'] $ensure                = 'present',
   String                    $personal_access_token = $github_actions_runner::personal_access_token,
