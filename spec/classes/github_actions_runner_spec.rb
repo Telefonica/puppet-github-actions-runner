@@ -11,23 +11,31 @@ describe 'github_actions_runner' do
           },
         }
       end
- 
-      it { is_expected.to compile.and_raise_error(/Either 'org_name' or 'enterprise_name' is required to create runner instances/) }
 
-      let(:params) do
-        {
-          'org_name'  => 'github_org',
-          'instances' => {
-            'first_runner' => {
-              'labels'    => ['test_label1', 'test_label2'],
-              'repo_name' => 'test_repo',
-            },
-          },
-        }
+      context 'is expected compile and raise error' do
+        it do
+          is_expected.to compile.and_raise_error(%r{Either 'org_name' or 'enterprise_name' is required to create runner instances})
+        end
       end
 
-      it { is_expected.to compile.with_all_deps }
-      it { is_expected.to contain_class('github_actions_runner') }
+      context 'is expected compile' do
+        let(:params) do
+          super().merge(
+            'org_name'  => 'github_org',
+            'instances' => {
+              'first_runner' => {
+                'labels'    => ['test_label1', 'test_label2'],
+                'repo_name' => 'test_repo',
+              },
+            },
+          )
+        end
+
+        it do
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('github_actions_runner') }
+        end
+      end
 
       context 'is expected to create a github_actions_runner root directory' do
         it do
