@@ -14,7 +14,7 @@ Automatic configuration for running GitHub Actions as a service
 
 ## Description
 
-This module will setup all of the files and configuration needed for GitHub Actions runner to work on any Debian 9 hosts.
+This module will setup all of the files and configuration needed for GitHub Actions runner to work on Debian (Stretch and Buster) and CentOS7 hosts.
 
 ### hiera configuration examples
 
@@ -107,7 +107,7 @@ Note, your `personal_access_token` has to contain the `admin:enterprise` permiss
 
 ## Limitations
 
-Tested on Debian 9 stretch and CentOS7 hosts.
+Tested on Debian 9 (stretch), Debian 10 (buster) and CentOS7 hosts.
 Full list of operating systems support and requirements are described in `metadata.json` file.
 
 ## Development
