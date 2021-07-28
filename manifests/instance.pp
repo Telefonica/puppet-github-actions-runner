@@ -42,21 +42,21 @@
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
 define github_actions_runner::instance (
-  Enum['present', 'absent'] $ensure                = 'present',
-  String                    $personal_access_token = $github_actions_runner::personal_access_token,
-  String                    $user                  = $github_actions_runner::user,
-  String                    $group                 = $github_actions_runner::group,
-  String                    $hostname              = $::facts['hostname'],
-  String                    $instance_name         = $title,
-  String                    $github_domain         = $github_actions_runner::github_domain,
-  String                    $github_api            = $github_actions_runner::github_api,
-  Optional[String]          $http_proxy            = $github_actions_runner::http_proxy,
-  Optional[String]          $https_proxy           = $github_actions_runner::https_proxy,
-  Optional[String]          $no_proxy              = $github_actions_runner::no_proxy,
-  Optional[Array[String]]   $labels                = undef,
-  Optional[String]          $enterprise_name       = $github_actions_runner::enterprise_name,
-  Optional[String]          $org_name              = $github_actions_runner::org_name,
-  Optional[String]          $repo_name             = undef,
+  Enum['present', 'absent']  $ensure                = 'present',
+  String[1]                  $personal_access_token = $github_actions_runner::personal_access_token,
+  String[1]                  $user                  = $github_actions_runner::user,
+  String[1]                  $group                 = $github_actions_runner::group,
+  String[1]                  $hostname              = $::facts['hostname'],
+  String[1]                  $instance_name         = $title,
+  String[1]                  $github_domain         = $github_actions_runner::github_domain,
+  String[1]                  $github_api            = $github_actions_runner::github_api,
+  Optional[String[1]]        $http_proxy            = $github_actions_runner::http_proxy,
+  Optional[String[1]]        $https_proxy           = $github_actions_runner::https_proxy,
+  Optional[String[1]]        $no_proxy              = $github_actions_runner::no_proxy,
+  Optional[Array[String[1]]] $labels                = undef,
+  Optional[String[1]]        $enterprise_name       = $github_actions_runner::enterprise_name,
+  Optional[String[1]]        $org_name              = $github_actions_runner::org_name,
+  Optional[String[1]]        $repo_name             = undef,
 ) {
 
   if $labels {
@@ -65,7 +65,6 @@ define github_actions_runner::instance (
   } else {
     $assured_labels = ''
   }
-
 
   if $org_name {
     if $repo_name {

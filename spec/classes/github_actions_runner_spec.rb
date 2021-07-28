@@ -6,34 +6,30 @@ describe 'github_actions_runner' do
       let(:facts) { os_facts }
       let(:params) do
         {
+          'org_name' => 'github_org',
           'instances' => {
-            'first_runner' => {},
+            'first_runner' => {
+              'labels' => ['test_label1', 'test_label2'],
+              'repo_name' => 'test_repo',
+            },
           },
         }
       end
 
-      context 'is expected compile and raise error' do
+      context 'is expected compile' do
         it do
-          is_expected.to compile.and_raise_error(%r{Either 'org_name' or 'enterprise_name' is required to create runner instances})
+          is_expected.to compile.with_all_deps
+          is_expected.to contain_class('github_actions_runner')
         end
       end
 
-      context 'is expected compile' do
+      context 'is expected compile and raise error when required values are undefined' do
         let(:params) do
-          super().merge(
-            'org_name'  => 'github_org',
-            'instances' => {
-              'first_runner' => {
-                'labels'    => ['test_label1', 'test_label2'],
-                'repo_name' => 'test_repo',
-              },
-            },
-          )
+          super().merge('org_name' => :undef, 'enterprise_name' => :undef)
         end
 
         it do
-          it { is_expected.to compile.with_all_deps }
-          it { is_expected.to contain_class('github_actions_runner') }
+          is_expected.to compile.and_raise_error(%r{Either 'org_name' or 'enterprise_name' is required to create runner instances})
         end
       end
 
@@ -189,6 +185,16 @@ describe 'github_actions_runner' do
         end
       end
 
+      context 'is expected to create a github_actions_runner installation script with test_org in content ignoring enterprise_name' do
+        let(:params) do
+          super().merge('org_name' => 'test_org', 'enterprise_name' => 'test_enterprise')
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://github.com/test_org/test_repo})
+        end
+      end
+
       context 'is expected to create a github_actions_runner installation script with test_org in content' do
         let(:params) do
           super().merge('org_name' => 'test_org')
@@ -201,7 +207,7 @@ describe 'github_actions_runner' do
 
       context 'is expected to create a github_actions_runner installation script with test_enterprise in content' do
         let(:params) do
-          super().merge('org_name'        => '',
+          super().merge('org_name'        => :undef,
                         'enterprise_name' => 'test_enterprise')
         end
 
