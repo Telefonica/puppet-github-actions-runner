@@ -132,6 +132,15 @@ define github_actions_runner::instance (
     require => Archive["${instance_name}-${archive_name}"],
   }
 
+  exec { "${instance_name}-check-runner-configured":
+    user    => $user,
+    cwd     => "${github_actions_runner::root_dir}/${instance_name}",
+    command => "true",
+    unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
+    path    => ["/bin", "/usr/bin"],
+    notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
+  }
+
   exec { "${instance_name}-ownership":
     user        => $user,
     cwd         => $github_actions_runner::root_dir,
