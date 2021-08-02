@@ -1,6 +1,6 @@
 {
   "name": "telefonica-github_actions_runner",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "Shimon Ohayon",
   "summary": "Module to configure our GitHub Actions runner on Debian hosts",
   "license": "Apache-2.0",
@@ -26,7 +26,14 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "9"
+        "9",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
       ]
     },
     {

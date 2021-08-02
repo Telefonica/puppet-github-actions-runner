@@ -2,7 +2,7 @@
 # ===========================
 #
 # Manages actions_runner service and configuration
-# All default Can be view at the `modules/actions_runner/data/common.yaml` file.
+# All defaults can be viewed in the `modules/actions_runner/data/common.yaml` file.
 #
 # Parameters
 # ----------
@@ -15,6 +15,9 @@
 #
 # * org_name
 #  String, actions runner org name.
+#
+# * enterprise_name
+#  String, enterprise name for global runners
 #
 # * personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
@@ -52,23 +55,23 @@
 # * no_proxy
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
-
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
   Stdlib::Absolutepath      $base_dir_name,
-  String                    $org_name,
-  String                    $personal_access_token,
-  String                    $package_name,
-  String                    $package_ensure,
-  String                    $repository_url,
-  String                    $user,
-  String                    $group,
-  Hash[String, Hash]        $instances,
-  String                    $github_domain,
-  String                    $github_api,
-  Optional[String]          $http_proxy = undef,
-  Optional[String]          $https_proxy = undef,
-  Optional[String]          $no_proxy = undef,
+  String[1]                 $personal_access_token,
+  String[1]                 $package_name,
+  String[1]                 $package_ensure,
+  String[1]                 $repository_url,
+  String[1]                 $user,
+  String[1]                 $group,
+  Hash[String[1], Hash]     $instances,
+  String[1]                 $github_domain,
+  String[1]                 $github_api,
+  Optional[String[1]]       $enterprise_name = undef,
+  Optional[String[1]]       $org_name = undef,
+  Optional[String[1]]       $http_proxy = undef,
+  Optional[String[1]]       $https_proxy = undef,
+  Optional[String[1]]       $no_proxy = undef,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
