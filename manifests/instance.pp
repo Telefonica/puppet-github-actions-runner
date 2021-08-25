@@ -135,9 +135,9 @@ define github_actions_runner::instance (
   exec { "${instance_name}-check-runner-configured":
     user    => $user,
     cwd     => "${github_actions_runner::root_dir}/${instance_name}",
-    command => "true",
+    command => 'true',
     unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
-    path    => ["/bin", "/usr/bin"],
+    path    => ['/bin', '/usr/bin'],
     notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
   }
 

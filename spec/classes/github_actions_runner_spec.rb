@@ -83,6 +83,7 @@ describe 'github_actions_runner' do
             'group'  => 'root',
             'mode'   => '0644',
           )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner').that_requires(['File[/some_dir/actions-runner-2.272.0]'])
         end
       end
 
@@ -99,6 +100,7 @@ describe 'github_actions_runner' do
             'group'  => 'test_group',
             'mode'   => '0644',
           )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner').that_requires(['File[/some_dir/actions-runner-2.272.0]'])
         end
       end
 
@@ -109,6 +111,7 @@ describe 'github_actions_runner' do
             'user'   => 'root',
             'group'  => 'root',
           )
+          is_expected.to contain_archive('first_runner-actions-runner-linux-x64-2.272.0.tar.gz').that_requires(['File[/some_dir/actions-runner-2.272.0/first_runner]'])
         end
       end
 
@@ -126,6 +129,7 @@ describe 'github_actions_runner' do
             'group'  => 'root',
             'source' => 'https://test_url/v9.9.9/test_package-9.9.9.tar.gz',
           )
+          is_expected.to contain_archive('first_runner-test_package-9.9.9.tar.gz').that_requires(['File[/some_dir/actions-runner-9.9.9/first_runner]'])
         end
       end
 
@@ -135,6 +139,19 @@ describe 'github_actions_runner' do
             'user'    => 'root',
             'command' => '/bin/chown -R root:root /some_dir/actions-runner-2.272.0/first_runner',
           )
+          is_expected.to contain_exec('first_runner-ownership').that_subscribes_to('Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]')
+        end
+      end
+
+      context 'is expected to contain a exec checking runner configured' do
+        it do
+          is_expected.to contain_exec('first_runner-check-runner-configured').with(
+            'user'    => 'root',
+            'command' => 'true',
+            'unless' => 'test -f /some_dir/actions-runner-2.272.0/first_runner/runsvc.sh',
+            'path' => ['/bin', '/usr/bin'],
+          )
+          is_expected.to contain_exec('first_runner-check-runner-configured').that_notifies('Exec[first_runner-run_configure_install_runner.sh]')
         end
       end
 
@@ -155,6 +172,8 @@ describe 'github_actions_runner' do
             'group'  => 'root',
             'mode'   => '0755',
           )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_requires('Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]')
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_notifies('Exec[first_runner-run_configure_install_runner.sh]')
         end
       end
 
@@ -170,6 +189,8 @@ describe 'github_actions_runner' do
             'group'  => 'root',
             'mode'   => '0755',
           )
+          is_expected.to contain_file('/some_dir/actions-runner-9.9.9/first_runner/configure_install_runner.sh').that_requires('Archive[first_runner-actions-runner-linux-x64-9.9.9.tar.gz]')
+          is_expected.to contain_file('/some_dir/actions-runner-9.9.9/first_runner/configure_install_runner.sh').that_notifies('Exec[first_runner-run_configure_install_runner.sh]')
         end
       end
 
@@ -259,6 +280,8 @@ describe 'github_actions_runner' do
             'enable' => true,
             'active' => true,
           )
+          is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').that_requires(['File[/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh]',
+                                                                                                                 'Exec[first_runner-run_configure_install_runner.sh]'])
         end
       end
 
