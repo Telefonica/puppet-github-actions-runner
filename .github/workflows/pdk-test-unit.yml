@@ -21,7 +21,7 @@ jobs:
         puppet-version: ${{ matrix.puppet-version }}
 
   testing:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted-novum, self-hosted, linux]
     strategy:
       matrix:
         puppet-version: [5, 6, 7]
