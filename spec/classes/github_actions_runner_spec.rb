@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'deep_merge'
 
 describe 'github_actions_runner' do
   on_supported_os.each do |os, os_facts|
@@ -164,16 +165,109 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a github_actions_runner installation script' do
-        it do
-          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
-            'ensure' => 'present',
-            'owner'  => 'root',
-            'group'  => 'root',
-            'mode'   => '0755',
+      context 'installation scripts' do
+        let(:params) do
+          super().deep_merge(
+            'instances' => {
+              'org_runner' => {
+                'labels' => ['default'],
+              },
+            },
           )
-          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_requires('Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]')
-          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_notifies('Exec[first_runner-run_configure_install_runner.sh]')
+        end
+        install_script_content_first_runner = <<~HEREDOC
+          #!/bin/bash
+          # Configure the action runner after the package file has been downloaded.
+          set -e
+
+          # Get registration token.
+          TOKEN=$(curl -s -XPOST -H "authorization: token PAT"  \\
+              https://api.github.com/repos/github_org/test_repo/actions/runners/registration-token | jq -r .token)
+
+          # Allow root
+          export RUNNER_ALLOW_RUNASROOT=true
+
+
+          # (Optional) Remove previous config.
+          /some_dir/actions-runner-2.272.0/first_runner/config.sh remove \\
+            --url https://github.com/github_org/test_repo                                     \\
+            --token ${TOKEN}                                      \\
+            --name foo-first_runner &>/dev/null
+
+
+          # Configure the runner.
+          /some_dir/actions-runner-2.272.0/first_runner/config.sh \\
+            --unattended                                   \\
+            --replace                                      \\
+            --name foo-first_runner  \\
+            --url https://github.com/github_org/test_repo                              \\
+            --token ${TOKEN}                               \\
+            --labels test_label1,test_label2 &>/dev/null
+
+          # Copy service endpoint script.
+          if [ ! -f /some_dir/actions-runner-2.272.0/first_runner/runsvc.sh ]; then
+            cp /some_dir/actions-runner-2.272.0/first_runner/bin/runsvc.sh /some_dir/actions-runner-2.272.0/first_runner/runsvc.sh
+            chmod 755 /some_dir/actions-runner-2.272.0/first_runner/runsvc.sh
+          fi
+          HEREDOC
+        install_script_content_org_runner = <<~HEREDOC
+          #!/bin/bash
+          # Configure the action runner after the package file has been downloaded.
+          set -e
+
+          # Get registration token.
+          TOKEN=$(curl -s -XPOST -H "authorization: token PAT"  \\
+              https://api.github.com/orgs/github_org/actions/runners/registration-token | jq -r .token)
+
+          # Allow root
+          export RUNNER_ALLOW_RUNASROOT=true
+
+
+          # (Optional) Remove previous config.
+          /some_dir/actions-runner-2.272.0/org_runner/config.sh remove \\
+            --url https://github.com/github_org                                     \\
+            --token ${TOKEN}                                      \\
+            --name foo-org_runner &>/dev/null
+
+
+          # Configure the runner.
+          /some_dir/actions-runner-2.272.0/org_runner/config.sh \\
+            --unattended                                   \\
+            --replace                                      \\
+            --name foo-org_runner  \\
+            --url https://github.com/github_org                              \\
+            --token ${TOKEN}                               \\
+            --labels default &>/dev/null
+
+          # Copy service endpoint script.
+          if [ ! -f /some_dir/actions-runner-2.272.0/org_runner/runsvc.sh ]; then
+            cp /some_dir/actions-runner-2.272.0/org_runner/bin/runsvc.sh /some_dir/actions-runner-2.272.0/org_runner/runsvc.sh
+            chmod 755 /some_dir/actions-runner-2.272.0/org_runner/runsvc.sh
+          fi
+          HEREDOC
+
+        it 'creates a repo specific runner script' do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+            'require' => 'Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]',
+            'notify'  => 'Exec[first_runner-run_configure_install_runner.sh]',
+            'content' => install_script_content_first_runner,
+          )
+        end
+
+        it 'creates an org specific runner script' do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+            'require' => 'Archive[org_runner-actions-runner-linux-x64-2.272.0.tar.gz]',
+            'notify'  => 'Exec[org_runner-run_configure_install_runner.sh]',
+            'content' => install_script_content_org_runner,
+          )
         end
       end
 
