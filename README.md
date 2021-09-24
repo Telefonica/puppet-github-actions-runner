@@ -53,7 +53,7 @@ github_actions_runner::instances:
 ```
 
 Note, your `personal_access_token` has to contain the `repo` permission.
-    
+
 #### Instance level overwrites
 ```yaml
 github_actions_runner::instances:
