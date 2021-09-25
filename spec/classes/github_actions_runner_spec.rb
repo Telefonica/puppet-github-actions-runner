@@ -175,6 +175,7 @@ describe 'github_actions_runner' do
             },
           )
         end
+
         install_script_content_first_runner = <<~HEREDOC
           #!/bin/bash
           # Configure the action runner after the package file has been downloaded.
