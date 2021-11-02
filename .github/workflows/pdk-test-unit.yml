@@ -7,7 +7,7 @@ on:
 
 jobs:
   validating:
-    runs-on: [self-hosted-novum, self-hosted, linux]
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         puppet-version: [5, 6, 7]
@@ -21,13 +21,10 @@ jobs:
         puppet-version: ${{ matrix.puppet-version }}
 
   testing:
-    runs-on: [self-hosted-novum, self-hosted, linux]
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         puppet-version: [5, 6, 7]
-    if: always()
-    needs:
-    - validating
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
