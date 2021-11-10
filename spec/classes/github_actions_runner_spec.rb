@@ -164,16 +164,77 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a github_actions_runner installation script' do
-        it do
-          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
-            'ensure' => 'present',
-            'owner'  => 'root',
-            'group'  => 'root',
-            'mode'   => '0755',
+      context 'installation scripts for different types of runners' do
+        let(:params) do
+          super().merge(
+            'org_name' => :undef,
+            'enterprise_name' => :undef,
+            'instances' => {
+              'first_runner' => {
+                'org_name' => 'github_org',
+                'repo_name' => 'test_repo',
+              },
+              'org_runner' => {
+                'org_name' => 'github_org',
+                'labels' => ['default'],
+              },
+              'enterprise_runner' => {
+                'org_name' => :undef,
+                'enterprise_name' => 'test_enterprise',
+                'labels' => ['default'],
+              },
+            },
           )
+        end
+
+        it 'creates a repo specific runner script' do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(
+            %r{https://api.github.com/repos/github_org/test_repo/actions/runners/registration-token},
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--url https://github.com/github_org/test_repo })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--name foo-first_runner })
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_requires('Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]')
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').that_notifies('Exec[first_runner-run_configure_install_runner.sh]')
+        end
+
+        it 'creates an org specific runner script' do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').with_content(
+            %r{https://api.github.com/orgs/github_org/actions/runners/registration-token},
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').with_content(%r{--url https://github.com/github_org })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').with_content(%r{--name foo-org_runner })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').that_requires('Archive[org_runner-actions-runner-linux-x64-2.272.0.tar.gz]')
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/org_runner/configure_install_runner.sh').that_notifies('Exec[org_runner-run_configure_install_runner.sh]')
+        end
+
+        it 'creates an enterprise specific runner script' do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').with_content(
+            %r{https://api.github.com/enterprises/test_enterprise/actions/runners/registration-token},
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').with_content(%r{--url https://github.com/enterprises/test_enterprise   })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').with_content(%r{--name foo-enterprise_runner })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').that_requires(
+            'Archive[enterprise_runner-actions-runner-linux-x64-2.272.0.tar.gz]',
+          )
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/enterprise_runner/configure_install_runner.sh').that_notifies('Exec[enterprise_runner-run_configure_install_runner.sh]')
         end
       end
 
@@ -234,6 +295,8 @@ describe 'github_actions_runner' do
 
         it do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{https://github.com/enterprises/test_enterprise})
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--url https://github.com/enterprises/test_enterprise })
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with_content(%r{--name foo-first_runner })
         end
       end
 
