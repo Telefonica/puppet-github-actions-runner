@@ -129,7 +129,7 @@ define github_actions_runner::instance (
     require => Archive["${instance_name}-${archive_name}"],
   }
 
-  if $ensure == "present" {
+  if $ensure == 'present' {
       exec { "${instance_name}-check-runner-configured":
         user    => $user,
         cwd     => '/srv',
