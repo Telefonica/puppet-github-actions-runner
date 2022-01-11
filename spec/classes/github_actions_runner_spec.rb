@@ -379,6 +379,10 @@ describe 'github_actions_runner' do
           is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh').with(
             'ensure' => 'absent',
           )
+
+          is_expected.not_to contain_exec('first_runner-check-runner-configured')
+          is_expected.to contain_exec('first_runner-ownership')
+          is_expected.to contain_exec('first_runner-run_configure_install_runner.sh')
         end
       end
 

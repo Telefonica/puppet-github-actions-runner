@@ -129,13 +129,15 @@ define github_actions_runner::instance (
     require => Archive["${instance_name}-${archive_name}"],
   }
 
-  exec { "${instance_name}-check-runner-configured":
-    user    => $user,
-    cwd     => "${github_actions_runner::root_dir}/${instance_name}",
-    command => 'true',
-    unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
-    path    => ['/bin', '/usr/bin'],
-    notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
+  if $ensure == 'present' {
+      exec { "${instance_name}-check-runner-configured":
+        user    => $user,
+        cwd     => '/srv',
+        command => 'true',
+        unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
+        path    => ['/bin', '/usr/bin'],
+        notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
+      }
   }
 
   exec { "${instance_name}-ownership":
@@ -143,15 +145,18 @@ define github_actions_runner::instance (
     cwd         => $github_actions_runner::root_dir,
     command     => "/bin/chown -R ${user}:${group} ${github_actions_runner::root_dir}/${instance_name}",
     refreshonly => true,
-    path        => "/tmp/${instance_name}-${archive_name}",
-    subscribe   => Archive["${instance_name}-${archive_name}"]
+    path        => ['/bin', '/usr/bin'],
+    subscribe   => Archive["${instance_name}-${archive_name}"],
+    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
   }
 
   exec { "${instance_name}-run_configure_install_runner.sh":
     user        => $user,
     cwd         => "${github_actions_runner::root_dir}/${instance_name}",
     command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
-    refreshonly => true
+    refreshonly => true,
+    path        => ['/bin', '/usr/bin'],
+    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
   }
 
   $active_service = $ensure ? {
