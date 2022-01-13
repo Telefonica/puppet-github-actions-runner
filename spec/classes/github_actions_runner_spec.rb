@@ -344,7 +344,79 @@ describe 'github_actions_runner' do
             'active' => true,
           )
           is_expected.to contain_systemd__unit_file('github-actions-runner.first_runner.service').that_requires(['File[/some_dir/actions-runner-2.272.0/first_runner/configure_install_runner.sh]',
+                                                                                                                 'File[/some_dir/actions-runner-2.272.0/first_runner/.path]',
                                                                                                                  'Exec[first_runner-run_configure_install_runner.sh]'])
+        end
+      end
+
+      context 'is expected to create a .path file with a specific requires and notifies' do
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path')
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path').that_requires(['Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]',
+                                                                                                            'Exec[first_runner-run_configure_install_runner.sh]'])
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path').that_notifies('Systemd::Unit_file[github-actions-runner.first_runner.service]')
+        end
+      end
+
+      context 'is expected to create a .path file in an instance with default path list' do
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+            'content' => "/usr/local/bin:/usr/bin:/bin\n",
+          )
+        end
+      end
+
+      context 'is expected to create a .path file in an instance setting path at global level' do
+        let(:params) do
+          super().merge(
+            'path' => [
+              '/usr/bin',
+              '/bin',
+            ],
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+            'content' => "/usr/bin:/bin\n",
+          )
+        end
+      end
+
+      context 'is expected to create a .path file in an instance setting the path at instance level' do
+        let(:params) do
+          super().merge(
+            'path' => [
+              '/usr/bin',
+              '/bin',
+            ],
+            'instances' => {
+              'first_runner' => {
+                'path' => [
+                  '/bin',
+                  '/other/path',
+                ]
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.path').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+            'content' => "/bin:/other/path\n",
+          )
         end
       end
 

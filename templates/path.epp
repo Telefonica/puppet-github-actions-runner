@@ -1,0 +1,3 @@
+<%- | Array[String] $paths,
+| -%>
+<%= join($paths, ':') %>

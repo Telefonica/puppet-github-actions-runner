@@ -10,3 +10,7 @@ github_actions_runner::group: 'root'
 github_actions_runner::instances: {}
 github_actions_runner::github_domain: "https://github.com"
 github_actions_runner::github_api: "https://api.github.com"
+github_actions_runner::path:
+  - '/usr/local/bin'
+  - '/usr/bin'
+  - '/bin'

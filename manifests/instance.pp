@@ -41,6 +41,9 @@
 # * labels
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
+# * path
+# Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
+#
 define github_actions_runner::instance (
   Enum['present', 'absent']  $ensure                = 'present',
   String[1]                  $personal_access_token = $github_actions_runner::personal_access_token,
@@ -57,6 +60,7 @@ define github_actions_runner::instance (
   Optional[String[1]]        $enterprise_name       = $github_actions_runner::enterprise_name,
   Optional[String[1]]        $org_name              = $github_actions_runner::org_name,
   Optional[String[1]]        $repo_name             = undef,
+  Optional[Array[String]]    $path                  = $github_actions_runner::path,
 ) {
 
   if $labels {
@@ -159,6 +163,20 @@ define github_actions_runner::instance (
     onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
   }
 
+  file { "${github_actions_runner::root_dir}/${name}/.path":
+    ensure  => $ensure,
+    mode    => '0644',
+    owner   => $user,
+    group   => $group,
+    content => epp('github_actions_runner/path.epp', {
+      paths => $path,
+    }),
+    require => [Archive["${instance_name}-${archive_name}"],
+                Exec["${instance_name}-run_configure_install_runner.sh"],
+    ],
+    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"]
+  }
+
   $active_service = $ensure ? {
     'present' => true,
     'absent'  => false,
@@ -183,6 +201,7 @@ define github_actions_runner::instance (
       no_proxy      => $no_proxy,
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
+                File["${github_actions_runner::root_dir}/${instance_name}/.path"],
                 Exec["${instance_name}-run_configure_install_runner.sh"]],
   }
 
