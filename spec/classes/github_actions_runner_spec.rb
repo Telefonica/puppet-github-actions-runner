@@ -364,8 +364,8 @@ describe 'github_actions_runner' do
             'ensure'  => 'present',
             'owner'   => 'root',
             'group'   => 'root',
-            'mode'    => '0755',
-            'content' => undef,
+            'mode'    => '0644',
+            'content' => nil,
           )
         end
       end
@@ -385,7 +385,7 @@ describe 'github_actions_runner' do
             'ensure'  => 'present',
             'owner'   => 'root',
             'group'   => 'root',
-            'mode'    => '0755',
+            'mode'    => '0644',
             'content' => "/usr/bin:/bin\n",
           )
         end
@@ -414,7 +414,7 @@ describe 'github_actions_runner' do
             'ensure'  => 'present',
             'owner'   => 'root',
             'group'   => 'root',
-            'mode'    => '0755',
+            'mode'    => '0644',
             'content' => "/bin:/other/path\n",
           )
         end
