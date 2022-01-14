@@ -42,7 +42,8 @@
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
 # * path
-# Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
+# Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, this file will be kept as created
+#                          by the runner scripts. (Default: Value set by github_actions_runner Class)
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']  $ensure                = 'present',

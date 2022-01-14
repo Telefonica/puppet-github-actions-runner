@@ -56,7 +56,7 @@
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
 # * path
-# Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
+# Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, this file will be kept as created by the runner scripts. Default value: undef
 #
 class github_actions_runner (
   Enum['present', 'absent'] $ensure,
