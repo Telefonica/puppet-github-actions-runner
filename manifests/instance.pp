@@ -163,14 +163,19 @@ define github_actions_runner::instance (
     onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
   }
 
+  $content_path = $path ? {
+      undef   => undef,
+      default => epp('github_actions_runner/path.epp', {
+        paths => $path,
+      })
+  }
+
   file { "${github_actions_runner::root_dir}/${name}/.path":
     ensure  => $ensure,
     mode    => '0644',
     owner   => $user,
     group   => $group,
-    content => epp('github_actions_runner/path.epp', {
-      paths => $path,
-    }),
+    content => $content_path,
     require => [Archive["${instance_name}-${archive_name}"],
                 Exec["${instance_name}-run_configure_install_runner.sh"],
     ],

@@ -75,7 +75,7 @@ class github_actions_runner (
   Optional[String[1]]       $http_proxy = undef,
   Optional[String[1]]       $https_proxy = undef,
   Optional[String[1]]       $no_proxy = undef,
-  Optional[Array[String]]   $path,
+  Optional[Array[String]]   $path = undef,
 ) {
 
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"

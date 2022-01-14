@@ -365,7 +365,7 @@ describe 'github_actions_runner' do
             'owner'   => 'root',
             'group'   => 'root',
             'mode'    => '0755',
-            'content' => "/usr/local/bin:/usr/bin:/bin\n",
+            'content' => undef,
           )
         end
       end
