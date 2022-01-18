@@ -18,7 +18,7 @@ This module will setup all of the files and configuration needed for GitHub Acti
 
 ### hiera configuration examples
 
-This module supports configuration through hiera. 
+This module supports configuration through hiera.
 
 #### Creating an organization level Actions runner
 
@@ -53,7 +53,7 @@ github_actions_runner::instances:
 ```
 
 Note, your `personal_access_token` has to contain the `repo` permission.
-    
+
 #### Instance level overwrites
 ```yaml
 github_actions_runner::instances:
@@ -88,7 +88,7 @@ github_actions_runner::github_domain: "https://git.example.com"
 github_actions_runner::github_api: "https://git.example.com/api/v3"
 ```
 
-In addition to the runner configuration examples above, you can also configure runners 
+In addition to the runner configuration examples above, you can also configure runners
 on the enterprise level by setting a value for `enterprise_name`, for example:
 ```yaml
 github_actions_runner::ensure: present
@@ -104,6 +104,35 @@ github_actions_runner::instances:
 ```
 
 Note, your `personal_access_token` has to contain the `admin:enterprise` permission.
+
+### Update PATH used by Github Runners
+
+By default, puppet will not modify the values that the runner scripts create when
+the runner is set.
+
+In case you need to use another value of paths in the environment variable PATH,
+you can define through hiera. For example:
+
+- For all runners defined:
+  ```yaml
+  github_actions_runner::path:
+    - /usr/local/bin
+    - /usr/bin
+    - /bin
+    - /my/own/path
+  ```
+- For just a specific runner:
+  ```yaml
+  github_actions_runner::instances:
+    example_org_instance:
+      path:
+        - /usr/local/bin
+        - /usr/bin
+        - /bin
+        - /my/own/path
+      labels:
+        - self-hosted-custom
+  ```
 
 ## Limitations
 
