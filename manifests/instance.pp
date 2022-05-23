@@ -42,26 +42,32 @@
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
 # * path
-# Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, this file will be kept as created
+# Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created
 #                          by the runner scripts. (Default: Value set by github_actions_runner Class)
 #
+# * env
+# Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
+#                                 If not defined, file ".env" will be kept as created
+#                                 by the runner scripts. (Default: Value set by github_actions_runner Class)
+#
 define github_actions_runner::instance (
-  Enum['present', 'absent']  $ensure                = 'present',
-  String[1]                  $personal_access_token = $github_actions_runner::personal_access_token,
-  String[1]                  $user                  = $github_actions_runner::user,
-  String[1]                  $group                 = $github_actions_runner::group,
-  String[1]                  $hostname              = $::facts['hostname'],
-  String[1]                  $instance_name         = $title,
-  String[1]                  $github_domain         = $github_actions_runner::github_domain,
-  String[1]                  $github_api            = $github_actions_runner::github_api,
-  Optional[String[1]]        $http_proxy            = $github_actions_runner::http_proxy,
-  Optional[String[1]]        $https_proxy           = $github_actions_runner::https_proxy,
-  Optional[String[1]]        $no_proxy              = $github_actions_runner::no_proxy,
-  Optional[Array[String[1]]] $labels                = undef,
-  Optional[String[1]]        $enterprise_name       = $github_actions_runner::enterprise_name,
-  Optional[String[1]]        $org_name              = $github_actions_runner::org_name,
-  Optional[String[1]]        $repo_name             = undef,
-  Optional[Array[String]]    $path                  = $github_actions_runner::path,
+  Enum['present', 'absent']      $ensure                = 'present',
+  String[1]                      $personal_access_token = $github_actions_runner::personal_access_token,
+  String[1]                      $user                  = $github_actions_runner::user,
+  String[1]                      $group                 = $github_actions_runner::group,
+  String[1]                      $hostname              = $::facts['hostname'],
+  String[1]                      $instance_name         = $title,
+  String[1]                      $github_domain         = $github_actions_runner::github_domain,
+  String[1]                      $github_api            = $github_actions_runner::github_api,
+  Optional[String[1]]            $http_proxy            = $github_actions_runner::http_proxy,
+  Optional[String[1]]            $https_proxy           = $github_actions_runner::https_proxy,
+  Optional[String[1]]            $no_proxy              = $github_actions_runner::no_proxy,
+  Optional[Array[String[1]]]     $labels                = undef,
+  Optional[String[1]]            $enterprise_name       = $github_actions_runner::enterprise_name,
+  Optional[String[1]]            $org_name              = $github_actions_runner::org_name,
+  Optional[String[1]]            $repo_name             = undef,
+  Optional[Array[String]]        $path                  = $github_actions_runner::path,
+  Optional[Hash[String, String]] $env                   = $github_actions_runner::env,
 ) {
 
   if $labels {
@@ -177,6 +183,25 @@ define github_actions_runner::instance (
     owner   => $user,
     group   => $group,
     content => $content_path,
+    require => [Archive["${instance_name}-${archive_name}"],
+                Exec["${instance_name}-run_configure_install_runner.sh"],
+    ],
+    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"]
+  }
+
+  $content_env = $env ? {
+      undef   => undef,
+      default => epp('github_actions_runner/env.epp', {
+        envs => $env,
+      })
+  }
+
+  file { "${github_actions_runner::root_dir}/${name}/.env":
+    ensure  => $ensure,
+    mode    => '0644',
+    owner   => $user,
+    group   => $group,
+    content => $content_env,
     require => [Archive["${instance_name}-${archive_name}"],
                 Exec["${instance_name}-run_configure_install_runner.sh"],
     ],
