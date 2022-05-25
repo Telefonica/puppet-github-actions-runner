@@ -370,7 +370,7 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a .path file in an instance setting path at global level' do
+      context 'is expected to create a .path file in an instance, setting path at global level' do
         let(:params) do
           super().merge(
             'path' => [
@@ -391,7 +391,7 @@ describe 'github_actions_runner' do
         end
       end
 
-      context 'is expected to create a .path file in an instance setting the path at instance level' do
+      context 'is expected to create a .path file in an instance, setting the path at instance level' do
         let(:params) do
           super().merge(
             'path' => [
@@ -416,6 +416,77 @@ describe 'github_actions_runner' do
             'group'   => 'root',
             'mode'    => '0644',
             'content' => "/bin:/other/path\n",
+          )
+        end
+      end
+
+      # .env
+      context 'is expected to create a .env file with a specific requires and notifies' do
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env')
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env').that_requires(['Archive[first_runner-actions-runner-linux-x64-2.272.0.tar.gz]',
+                                                                                                           'Exec[first_runner-run_configure_install_runner.sh]'])
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env').that_notifies('Systemd::Unit_file[github-actions-runner.first_runner.service]')
+        end
+      end
+
+      context 'is expected to create a .env file in an instance with default env hash (nil content)' do
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0644',
+            'content' => nil,
+          )
+        end
+      end
+
+      context 'is expected to create a .env file in an instance, setting env at global level' do
+        let(:params) do
+          super().merge(
+            'env' => {
+              'foo' => 'bar',
+              'key' => 'value',
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0644',
+            'content' => "foo=bar\nkey=value\n",
+          )
+        end
+      end
+
+      context 'is expected to create a .env file in an instance, setting the env at instance level' do
+        let(:params) do
+          super().merge(
+            'env' => {
+              'foo' => 'bar',
+              'key' => 'value',
+            },
+            'instances' => {
+              'first_runner' => {
+                'env' => {
+                  'other' => 'value',
+                }
+              },
+            },
+          )
+        end
+
+        it do
+          is_expected.to contain_file('/some_dir/actions-runner-2.272.0/first_runner/.env').with(
+            'ensure'  => 'present',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0644',
+            'content' => "other=value\n",
           )
         end
       end
