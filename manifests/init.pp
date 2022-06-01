@@ -55,6 +55,9 @@
 # * no_proxy
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
+# * disable_update
+# Optional[Boolean], toggle for disabling automatic runner updates.
+#
 # * path
 # Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
 #                          If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
@@ -81,6 +84,7 @@ class github_actions_runner (
   Optional[String[1]]            $http_proxy = undef,
   Optional[String[1]]            $https_proxy = undef,
   Optional[String[1]]            $no_proxy = undef,
+  Optional[Boolean]              $disable_update = undef,
   Optional[Array[String]]        $path = undef,
   Optional[Hash[String, String]] $env = undef,
 ) {

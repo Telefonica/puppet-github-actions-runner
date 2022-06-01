@@ -5,6 +5,7 @@
       String $url,
       String $hostname,
       String $assured_labels,
+      Boolean $disable_update,
 | -%>
 #!/bin/bash
 # Configure the action runner after the package file has been downloaded.
@@ -32,6 +33,9 @@ export RUNNER_ALLOW_RUNASROOT=true
   --name <%= $hostname %>-<%= $instance_name %>  \
   --url <%= $url %>                              \
   --token ${TOKEN}                               \
+  <%- if $disable_update { -%>
+  --disableupdate                                \
+  <%- } -%>
   <%= $assured_labels %> &>/dev/null
 
 # Copy service endpoint script.
