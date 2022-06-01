@@ -83,7 +83,7 @@ You can find latest versions [here](https://github.com/actions/runner/releases)
 **Example**:
 
 ```
-2.272.0
+2.292.0
 ```
 
 ##### `repository_url`
