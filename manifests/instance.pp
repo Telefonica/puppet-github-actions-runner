@@ -139,7 +139,7 @@ define github_actions_runner::instance (
       url                   => $url,
       hostname              => $hostname,
       assured_labels        => $assured_labels,
-      disableupdate         => $disable_update,
+      disable_update         => $disable_update,
     }),
     notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
     require => Archive["${instance_name}-${archive_name}"],
