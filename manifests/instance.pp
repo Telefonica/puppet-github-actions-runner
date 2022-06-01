@@ -35,6 +35,9 @@
 # * no_proxy
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
+# * disable_update
+# Optional[Boolean], toggle for disabling automatic runner updates.
+#
 # * repo_name
 # Optional[String], actions runner repository name.
 #
@@ -62,6 +65,7 @@ define github_actions_runner::instance (
   Optional[String[1]]            $http_proxy            = $github_actions_runner::http_proxy,
   Optional[String[1]]            $https_proxy           = $github_actions_runner::https_proxy,
   Optional[String[1]]            $no_proxy              = $github_actions_runner::no_proxy,
+  Optional[Boolean]              $disable_update        = $github_actions_runner::disable_update,
   Optional[Array[String[1]]]     $labels                = undef,
   Optional[String[1]]            $enterprise_name       = $github_actions_runner::enterprise_name,
   Optional[String[1]]            $org_name              = $github_actions_runner::org_name,
@@ -135,6 +139,7 @@ define github_actions_runner::instance (
       url                   => $url,
       hostname              => $hostname,
       assured_labels        => $assured_labels,
+      disable_update        => $disable_update,
     }),
     notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
     require => Archive["${instance_name}-${archive_name}"],
