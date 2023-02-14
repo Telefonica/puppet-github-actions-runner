@@ -134,6 +134,18 @@ you can define through hiera. For example:
         - self-hosted-custom
   ```
 
+## Adding environment variables to runner
+
+The runner uses environment variables to decide pre/post-run scripts:
+https://docs.github.com/en/actions/hosting-your-own-runners/running-scripts-before-or-after-a-job#triggering-the-scripts
+
+```yaml
+github_actions_runner::env:
+  ACTIONS_RUNNER_HOOK_JOB_STARTED: "/cleanup_script"
+  FOO: "bar"
+```
+
+
 ## Limitations
 
 Tested on Debian 9 (stretch), Debian 10 (buster) and CentOS7 hosts.
