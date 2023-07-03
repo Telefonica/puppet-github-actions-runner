@@ -5,6 +5,7 @@
       String $url,
       String $hostname,
       String $assured_labels,
+      Optional[String[1]] $runner_group = undef,
       Boolean $disable_update,
 | -%>
 #!/bin/bash
@@ -33,6 +34,9 @@ export RUNNER_ALLOW_RUNASROOT=true
   --name <%= $hostname %>-<%= $instance_name %>  \
   --url <%= $url %>                              \
   --token ${TOKEN}                               \
+  <%- if $runner_group { -%>
+  --runnergroup <%= $runner_group %>             \
+  <%- } -%>
   <%- if $disable_update { -%>
   --disableupdate                                \
   <%- } -%>
