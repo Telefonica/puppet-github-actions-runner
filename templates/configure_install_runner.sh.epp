@@ -1,7 +1,7 @@
 <%- | String $personal_access_token,
       String $token_url,
       String $instance_name,
-      Stdlib::Absolutepath $root_dir,
+      String $root_dir,
       String $url,
       String $hostname,
       String $assured_labels,

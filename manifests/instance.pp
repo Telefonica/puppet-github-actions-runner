@@ -131,7 +131,7 @@ define github_actions_runner::instance (
     mode    => '0755',
     owner   => $user,
     group   => $group,
-    content => epp('github_actions_runner/configure_install_runner.sh.epp', {
+    content => stdlib::deferrable_epp('github_actions_runner/configure_install_runner.sh.epp', {
       personal_access_token => $personal_access_token,
       token_url             => $token_url,
       instance_name         => $instance_name,
