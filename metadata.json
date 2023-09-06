@@ -10,11 +10,11 @@
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 1.0.0 < 7.0.0"
+      "version_requirement": ">= 1.0.0 < 10.0.0"
     },
     {
-      "name": "camptocamp/systemd",
-      "version_requirement": ">= 2.7.0 < 3.0.0"
+      "name": "puppet-systemd",
+      "version_requirement": ">= 2.7.0 <= 5.2.0"
     },
     {
       "name": "puppet-archive",
@@ -33,23 +33,25 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "18.04"
+        "20.04",
+        "22.04"
       ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.10.0 < 7.0.0"
+      "version_requirement": ">= 7.0.0 < 9.0.0"
     }
   ],
-  "pdk-version": "2.1.1",
-  "template-url": "pdk-default#2.1.1",
-  "template-ref": "tags/2.1.1-0-g03daa92"
+  "pdk-version": "3.0.0",
+  "template-url": "pdk-default#3.0.0",
+  "template-ref": "tags/3.0.0-0-g056e50d"
 }

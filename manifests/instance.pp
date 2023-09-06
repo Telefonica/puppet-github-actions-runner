@@ -2,63 +2,70 @@
 #
 #  Configure and deploy actions runners instances
 #
-# * ensure
+# @param ensure
 #  Enum, Determine if to add or remove the resource.
 #
-# * org_name
+# @param org_name
 # Optional[String], org name for organization level runners. (Default: Value set by github_actions_runner Class)
 #
-# * enterprise_name
+# @param enterprise_name
 #  Optional[String], enterprise name for global runners. (Default: Value set by github_actions_runner Class)
 #
-# * personal_access_token
+# @param personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.(Default: Value set by github_actions_runner Class)
 #
-# * user
+# @param user
 # String, User to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 #
-# * group
+# @param group
 # String, Group to be used in Service and directories.(Default: Value set by github_actions_runner Class)
 #
-# * hostname
+# @param hostname
 # String, actions runner name.
 #
-# * instance_name
+# @param instance_name
 # String, The instance name as part of the instances Hash.
 #
-# * http_proxy
+# @param http_proxy
 # Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
 #
-# * https_proxy
+# @param https_proxy
 # Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
-# * no_proxy
+# @param no_proxy
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
-# * disable_update
+# @param disable_update
 # Optional[Boolean], toggle for disabling automatic runner updates.
 #
-# * repo_name
+# @param repo_name
 # Optional[String], actions runner repository name.
 #
-# * labels
+# @param labels
 # Optional[Array[String]], A list of costum lables to add to a runner.
 #
-# * path
+# @param path
 # Optional[Array[String]], List of paths to be used as PATH env in the instance runner. If not defined, file ".path" will be kept as created
 #                          by the runner scripts. (Default: Value set by github_actions_runner Class)
 #
-# * env
+# @param env
 # Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
 #                                 If not defined, file ".env" will be kept as created
 #                                 by the runner scripts. (Default: Value set by github_actions_runner Class)
+#
+# @param github_domain
+# String, Base url for the github installation.
+#
+#
+# @param github_api
+# String, api token for github registration
 #
 define github_actions_runner::instance (
   Enum['present', 'absent']      $ensure                = 'present',
   String[1]                      $personal_access_token = $github_actions_runner::personal_access_token,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
-  String[1]                      $hostname              = $::facts['hostname'],
+  String[1]                      $hostname              = $facts['networking']['hostname'],
   String[1]                      $instance_name         = $title,
   String[1]                      $github_domain         = $github_actions_runner::github_domain,
   String[1]                      $github_api            = $github_actions_runner::github_api,
@@ -73,7 +80,6 @@ define github_actions_runner::instance (
   Optional[Array[String]]        $path                  = $github_actions_runner::path,
   Optional[Hash[String, String]] $env                   = $github_actions_runner::env,
 ) {
-
   if $labels {
     $flattend_labels_list=join($labels, ',')
     $assured_labels="--labels ${flattend_labels_list}"
@@ -132,28 +138,28 @@ define github_actions_runner::instance (
     owner   => $user,
     group   => $group,
     content => epp('github_actions_runner/configure_install_runner.sh.epp', {
-      personal_access_token => $personal_access_token,
-      token_url             => $token_url,
-      instance_name         => $instance_name,
-      root_dir              => $github_actions_runner::root_dir,
-      url                   => $url,
-      hostname              => $hostname,
-      assured_labels        => $assured_labels,
-      disable_update        => $disable_update,
+        personal_access_token => $personal_access_token,
+        token_url             => $token_url,
+        instance_name         => $instance_name,
+        root_dir              => $github_actions_runner::root_dir,
+        url                   => $url,
+        hostname              => $hostname,
+        assured_labels        => $assured_labels,
+        disable_update        => $disable_update,
     }),
     notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
     require => Archive["${instance_name}-${archive_name}"],
   }
 
   if $ensure == 'present' {
-      exec { "${instance_name}-check-runner-configured":
-        user    => $user,
-        cwd     => '/srv',
-        command => 'true',
-        unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
-        path    => ['/bin', '/usr/bin'],
-        notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
-      }
+    exec { "${instance_name}-check-runner-configured":
+      user    => $user,
+      cwd     => '/srv',
+      command => 'true',
+      unless  => "test -f ${github_actions_runner::root_dir}/${instance_name}/runsvc.sh",
+      path    => ['/bin', '/usr/bin'],
+      notify  => Exec["${instance_name}-run_configure_install_runner.sh"],
+    }
   }
 
   exec { "${instance_name}-ownership":
@@ -163,7 +169,7 @@ define github_actions_runner::instance (
     refreshonly => true,
     path        => ['/bin', '/usr/bin'],
     subscribe   => Archive["${instance_name}-${archive_name}"],
-    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
+    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
   }
 
   exec { "${instance_name}-run_configure_install_runner.sh":
@@ -172,14 +178,14 @@ define github_actions_runner::instance (
     command     => "${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh",
     refreshonly => true,
     path        => ['/bin', '/usr/bin'],
-    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}"
+    onlyif      => "test -d ${github_actions_runner::root_dir}/${instance_name}",
   }
 
   $content_path = $path ? {
-      undef   => undef,
-      default => epp('github_actions_runner/path.epp', {
+    undef   => undef,
+    default => epp('github_actions_runner/path.epp', {
         paths => $path,
-      })
+    })
   }
 
   file { "${github_actions_runner::root_dir}/${name}/.path":
@@ -189,16 +195,16 @@ define github_actions_runner::instance (
     group   => $group,
     content => $content_path,
     require => [Archive["${instance_name}-${archive_name}"],
-                Exec["${instance_name}-run_configure_install_runner.sh"],
+      Exec["${instance_name}-run_configure_install_runner.sh"],
     ],
-    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"]
+    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"],
   }
 
   $content_env = $env ? {
-      undef   => undef,
-      default => epp('github_actions_runner/env.epp', {
+    undef   => undef,
+    default => epp('github_actions_runner/env.epp', {
         envs => $env,
-      })
+    })
   }
 
   file { "${github_actions_runner::root_dir}/${name}/.env":
@@ -208,9 +214,9 @@ define github_actions_runner::instance (
     group   => $group,
     content => $content_env,
     require => [Archive["${instance_name}-${archive_name}"],
-                Exec["${instance_name}-run_configure_install_runner.sh"],
+      Exec["${instance_name}-run_configure_install_runner.sh"],
     ],
-    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"]
+    notify  => Systemd::Unit_file["github-actions-runner.${instance_name}.service"],
   }
 
   $active_service = $ensure ? {
@@ -228,17 +234,16 @@ define github_actions_runner::instance (
     enable  => $enable_service,
     active  => $active_service,
     content => epp('github_actions_runner/github-actions-runner.service.epp', {
-      instance_name => $instance_name,
-      root_dir      => $github_actions_runner::root_dir,
-      user          => $user,
-      group         => $group,
-      http_proxy    => $http_proxy,
-      https_proxy   => $https_proxy,
-      no_proxy      => $no_proxy,
+        instance_name => $instance_name,
+        root_dir      => $github_actions_runner::root_dir,
+        user          => $user,
+        group         => $group,
+        http_proxy    => $http_proxy,
+        https_proxy   => $https_proxy,
+        no_proxy      => $no_proxy,
     }),
     require => [File["${github_actions_runner::root_dir}/${instance_name}/configure_install_runner.sh"],
-                File["${github_actions_runner::root_dir}/${instance_name}/.path"],
-                Exec["${instance_name}-run_configure_install_runner.sh"]],
+      File["${github_actions_runner::root_dir}/${instance_name}/.path"],
+    Exec["${instance_name}-run_configure_install_runner.sh"]],
   }
-
 }
