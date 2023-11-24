@@ -58,7 +58,7 @@ define github_actions_runner::instance (
   String[1]                      $personal_access_token = $github_actions_runner::personal_access_token,
   String[1]                      $user                  = $github_actions_runner::user,
   String[1]                      $group                 = $github_actions_runner::group,
-  String[1]                      $hostname              = $::facts['hostname'],
+  String[1]                      $hostname              = $facts['networking']['hostname'],
   String[1]                      $instance_name         = $title,
   String[1]                      $github_domain         = $github_actions_runner::github_domain,
   String[1]                      $github_api            = $github_actions_runner::github_api,
