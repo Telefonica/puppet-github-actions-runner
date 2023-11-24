@@ -7,62 +7,62 @@
 # Parameters
 # ----------
 #
-# * ensure
+# @param ensure
 #  Enum, Determine if to add or remove the resource.
 #
-# * base_dir_name
+# @param base_dir_name
 #  Absolutepath, Location of the base directory for actions runner to be installed.
 #
-# * org_name
+# @param org_name
 #  String, actions runner org name.
 #
-# * enterprise_name
+# @param enterprise_name
 #  String, enterprise name for global runners
 #
-# * personal_access_token
+# @param personal_access_token
 # String, GitHub PAT with admin permission on the repositories or the origanization.
 #
-# * package_name
+# @param package_name
 # String, GitHub Actions runner offical package name.
 #
-# * package_ensure
+# @param package_ensure
 # String, GitHub Actions runner version to be used.
 #
-# * repository_url
+# @param repository_url
 # String, URL to download GitHub actions runner.
 #
-# * user
+# @param user
 # String, User to be used in Service and directories.
 #
-# * group
+# @param group
 # String, Group to be used in Service and directories.
 #
-# * instances
+# @param instances
 # Hash[String, Hash], Github Runner Instances to be managed.
 #
-# * github_domain
+# @param github_domain
 # String, Base URL for Github Domain.
 #
-# * github_api
+# @param github_api
 # String, Base URL for Github API.
 #
-# * http_proxy
+# @param http_proxy
 # Optional[String], Proxy URL for HTTP traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners.
 #
-# * https_proxy
+# @param https_proxy
 # Optional[String], Proxy URL for HTTPS traffic. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
-# * no_proxy
+# @param no_proxy
 # Optional[String], Comma separated list of hosts that should not use a proxy. More information at https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners
 #
-# * disable_update
+# @param disable_update
 # Optional[Boolean], toggle for disabling automatic runner updates.
 #
-# * path
+# @param path
 # Optional[Array[String]], List of paths to be used as PATH env in the instance runner.
 #                          If not defined, file ".path" will be kept as created by the runner scripts. Default value: undef
 #
-# * env
+# @param env
 # Optional[Hash[String, String]], List of variables to be used as env variables in the instance runner.
 #                                 If not defined, file ".env" will be kept as created
 #                                 by the runner scripts. (Default: Value set by github_actions_runner Class)
@@ -88,7 +88,6 @@ class github_actions_runner (
   Optional[Array[String]]        $path = undef,
   Optional[Hash[String, String]] $env = undef,
 ) {
-
   $root_dir = "${github_actions_runner::base_dir_name}-${github_actions_runner::package_ensure}"
 
   $ensure_directory = $github_actions_runner::ensure ? {
@@ -105,5 +104,4 @@ class github_actions_runner (
   }
 
   create_resources(github_actions_runner::instance, $github_actions_runner::instances)
-
 }
