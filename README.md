@@ -1,3 +1,5 @@
+> **:warning: Project not maintained (we no longer can keep up with the changes and validate them, feel free to fork it)**
+
 ![PDK Test Unit](https://github.com/Telefonica/puppet-github-actions-runner/workflows/Run%20pdk%20test%20unit/badge.svg?branch=master)
 
 # GitHub Actions Runner
